@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
+import { healthRouter } from '../modules/health/health.routes';
+
 const router = Router();
 
-router.get('/health', (_request, response) => {
-  response.status(200).json({ status: 'ok' });
-});
+router.use('/health', healthRouter);
 
 export { router };

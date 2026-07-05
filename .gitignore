@@ -2,6 +2,7 @@
 /out-tsc
 /.idea
 /dist
+/src/generated/prisma
 .DS_Store
 .env
 
