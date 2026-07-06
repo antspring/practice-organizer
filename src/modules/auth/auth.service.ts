@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt, { SignOptions } from 'jsonwebtoken';
 
 import { appConfig } from '../../config/appConfig';
+import { UserRole } from '../../generated/prisma/enums';
 import { AppError } from '../../shared/http/errors/AppError';
 import {
   createRefreshToken,
@@ -21,6 +22,7 @@ const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 
 type AuthPayload = {
   userId: string;
+  role: UserRole;
 };
 
 type AuthInput = {
@@ -42,12 +44,12 @@ const toUserResponse = (user: Awaited<ReturnType<typeof findUserById>>) => {
   };
 };
 
-const createAccessToken = (userId: string) => {
+const createAccessToken = (payload: AuthPayload) => {
   const options: SignOptions = {
     expiresIn: appConfig.accessTokenExpiresIn,
   };
 
-  return jwt.sign({ userId } satisfies AuthPayload, appConfig.jwtSecret, options);
+  return jwt.sign(payload, appConfig.jwtSecret, options);
 };
 
 const hashRefreshToken = (refreshToken: string) => {
@@ -73,7 +75,7 @@ const createRefreshTokenForUser = async (userId: string) => {
 const createAuthResponse = async (user: NonNullable<Awaited<ReturnType<typeof findUserById>>>) => {
   return {
     user: toUserResponse(user),
-    accessToken: createAccessToken(user.id),
+    accessToken: createAccessToken({ userId: user.id, role: user.role }),
     refreshToken: await createRefreshTokenForUser(user.id),
   };
 };
