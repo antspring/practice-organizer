@@ -52,6 +52,20 @@ npm run dev
 
 The API uses `PORT` from `.env`.
 
+## API Docs
+
+In development mode, Swagger UI is available at:
+
+```bash
+http://localhost:3000/docs
+```
+
+The OpenAPI JSON document is available at:
+
+```bash
+http://localhost:3000/docs.json
+```
+
 ## Docker
 
 Start the API and PostgreSQL together:
