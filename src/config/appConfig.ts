@@ -6,6 +6,7 @@ const DEFAULT_PORT = 3000;
 const MIN_PORT = 1;
 const MAX_PORT = 65535;
 const DEFAULT_REFRESH_TOKEN_EXPIRES_IN_DAYS = 30;
+const DEFAULT_NODE_ENV = 'development';
 
 const parsePort = (value: string | undefined) => {
   if (!value) {
@@ -46,6 +47,7 @@ const parsePositiveInteger = (value: string | undefined, fallback: number, name:
 };
 
 export const appConfig = {
+  nodeEnv: process.env.NODE_ENV || DEFAULT_NODE_ENV,
   port: parsePort(process.env.PORT),
   databaseUrl: getRequiredEnv('DATABASE_URL'),
   jwtSecret: getRequiredEnv('JWT_SECRET'),
