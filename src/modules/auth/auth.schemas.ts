@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { UserRole } from '../../generated/prisma/enums';
+
 const emailSchema = z.string().trim().email().toLowerCase();
 
 const registerSchema = z.object({
@@ -18,4 +20,9 @@ const refreshTokenSchema = z.object({
 
 const logoutSchema = refreshTokenSchema;
 
-export { loginSchema, logoutSchema, refreshTokenSchema, registerSchema };
+const authPayloadSchema = z.object({
+  userId: z.string().uuid(),
+  role: z.enum([UserRole.student, UserRole.admin]),
+});
+
+export { authPayloadSchema, loginSchema, logoutSchema, refreshTokenSchema, registerSchema };

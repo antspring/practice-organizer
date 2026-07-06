@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express';
 
+import { UserRole } from '../../generated/prisma/enums';
 import { AppError } from '../../shared/http/errors/AppError';
 import { asyncHandler } from '../../shared/http/middlewares/asyncHandler';
-import { getCurrentUser, verifyAccessToken } from './auth.service';
+import { AuthPayload, getCurrentUser, verifyAccessToken } from './auth.service';
 
 const AUTHORIZATION_HEADER_PARTS_COUNT = 2;
 
@@ -27,4 +28,20 @@ const authenticate: RequestHandler = asyncHandler(async (request, response, next
   next();
 });
 
-export { authenticate };
+const authorize = (...allowedRoles: UserRole[]): RequestHandler => {
+  return (_request, response, next) => {
+    const auth = response.locals.auth as AuthPayload | undefined;
+
+    if (!auth) {
+      throw new AppError('Authentication is required', 401);
+    }
+
+    if (!allowedRoles.includes(auth.role)) {
+      throw new AppError('Forbidden', 403);
+    }
+
+    next();
+  };
+};
+
+export { authenticate, authorize };

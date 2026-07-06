@@ -2,9 +2,9 @@ import { createHash, randomBytes } from 'node:crypto';
 
 import bcrypt from 'bcryptjs';
 import jwt, { SignOptions } from 'jsonwebtoken';
+import { z } from 'zod';
 
 import { appConfig } from '../../config/appConfig';
-import { UserRole } from '../../generated/prisma/enums';
 import { AppError } from '../../shared/http/errors/AppError';
 import {
   createRefreshToken,
@@ -15,15 +15,13 @@ import {
   findUserByEmail,
   findUserById,
 } from './auth.repository';
+import { authPayloadSchema } from './auth.schemas';
 
 const PASSWORD_SALT_ROUNDS = 10;
 const REFRESH_TOKEN_BYTES_LENGTH = 64;
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 
-type AuthPayload = {
-  userId: string;
-  role: UserRole;
-};
+type AuthPayload = z.infer<typeof authPayloadSchema>;
 
 type AuthInput = {
   email: string;
@@ -117,7 +115,7 @@ const getCurrentUser = async (userId: string) => {
 
 const verifyAccessToken = (token: string) => {
   try {
-    const payload = jwt.verify(token, appConfig.jwtSecret) as AuthPayload;
+    const payload = authPayloadSchema.parse(jwt.verify(token, appConfig.jwtSecret));
 
     return payload;
   } catch {
@@ -147,3 +145,4 @@ const logout = async (refreshToken: string) => {
 };
 
 export { getCurrentUser, login, logout, refresh, register, verifyAccessToken };
+export type { AuthPayload };
