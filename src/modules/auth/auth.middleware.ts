@@ -21,6 +21,7 @@ const authenticate: RequestHandler = asyncHandler(async (request, response, next
   }
 
   const payload = verifyAccessToken(token);
+  response.locals.auth = payload;
   response.locals.user = await getCurrentUser(payload.userId);
 
   next();
