@@ -2,9 +2,20 @@ import './extendZodWithOpenApi';
 
 import { OpenApiGeneratorV3, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { registerAuthDocs } from '../../modules/auth/auth.docs';
+import { registerCohortsDocs } from '../../modules/cohorts/cohorts.docs';
 import { registerHealthDocs } from '../../modules/health/health.docs';
 import { registerUsersDocs } from '../../modules/users/users.docs';
-import { authResponseSchema, errorResponseSchema, userResponseSchema, usersListResponseSchema } from './apiSchemas';
+import {
+  authResponseSchema,
+  cohortDetailsResponseSchema,
+  cohortResponseSchema,
+  cohortsListResponseSchema,
+  errorResponseSchema,
+  publicCohortDetailsResponseSchema,
+  publicCohortResponseSchema,
+  userResponseSchema,
+  usersListResponseSchema,
+} from './apiSchemas';
 
 const createOpenApiRegistry = () => {
   const registry = new OpenAPIRegistry();
@@ -16,12 +27,18 @@ const createOpenApiRegistry = () => {
   });
 
   registry.register('User', userResponseSchema);
+  registry.register('Cohort', cohortResponseSchema);
+  registry.register('PublicCohort', publicCohortResponseSchema);
   registry.register('AuthResponse', authResponseSchema);
+  registry.register('CohortDetailsResponse', cohortDetailsResponseSchema);
+  registry.register('CohortsListResponse', cohortsListResponseSchema);
   registry.register('ErrorResponse', errorResponseSchema);
+  registry.register('PublicCohortDetailsResponse', publicCohortDetailsResponseSchema);
   registry.register('UsersListResponse', usersListResponseSchema);
 
   registerHealthDocs(registry);
   registerAuthDocs(registry);
+  registerCohortsDocs(registry);
   registerUsersDocs(registry);
 
   return registry;
