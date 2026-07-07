@@ -12,6 +12,11 @@ enum UserRole {
   admin
 }
 
+enum FormFieldType {
+  text
+  select
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -51,5 +56,40 @@ model Cohort {
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
+  formFields CohortFormField[]
+
   @@map("cohorts")
+}
+
+model CohortFormField {
+  id         String        @id @default(uuid())
+  cohortId   String        @map("cohort_id")
+  label      String
+  type       FormFieldType
+  isRequired Boolean       @default(true) @map("is_required")
+  sortOrder  Int           @default(0) @map("sort_order")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
+
+  cohort  Cohort                  @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  options CohortFormFieldOption[]
+
+  @@index([cohortId])
+  @@map("cohort_form_fields")
+}
+
+model CohortFormFieldOption {
+  id        String   @id @default(uuid())
+  fieldId   String   @map("field_id")
+  label     String
+  value     String
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  field CohortFormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@index([fieldId])
+  @@unique([fieldId, value])
+  @@map("cohort_form_field_options")
 }
