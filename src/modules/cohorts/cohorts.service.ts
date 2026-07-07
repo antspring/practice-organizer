@@ -4,6 +4,7 @@ import {
   createCohort,
   findCohortById,
   findCohortByPublicSlug,
+  findPublicCohortBySlug,
   getCohortFormFields,
   listCohorts,
   replaceCohortFormFields,
@@ -52,6 +53,7 @@ type ReplaceCohortFormInput = {
 };
 
 type CohortEntity = NonNullable<Awaited<ReturnType<typeof findCohortByPublicSlug>>>;
+type PublicCohortEntity = NonNullable<Awaited<ReturnType<typeof findPublicCohortBySlug>>>;
 
 const toDateRange = ({ startsAt, endsAt }: Pick<CreateCohortInput, 'startsAt' | 'endsAt'>) => {
   return {
@@ -80,7 +82,7 @@ const isApplicationOpen = (cohort: CohortEntity) => {
   return cohort.applicationStartsAt <= now && cohort.applicationEndsAt >= now;
 };
 
-const toPublicCohortResponse = (cohort: CohortEntity) => {
+const toPublicCohortResponse = (cohort: PublicCohortEntity) => {
   return {
     id: cohort.id,
     title: cohort.title,
@@ -90,6 +92,9 @@ const toPublicCohortResponse = (cohort: CohortEntity) => {
     applicationStartsAt: cohort.applicationStartsAt,
     applicationEndsAt: cohort.applicationEndsAt,
     isApplicationOpen: isApplicationOpen(cohort),
+    form: {
+      fields: cohort.formFields,
+    },
   };
 };
 
@@ -129,7 +134,7 @@ const getCohortById = async (id: string) => {
 };
 
 const getPublicCohortBySlug = async (publicSlug: string) => {
-  const cohort = await findCohortByPublicSlug(publicSlug);
+  const cohort = await findPublicCohortBySlug(publicSlug);
 
   if (!cohort || !cohort.isActive) {
     throw new AppError('Cohort not found', 404);

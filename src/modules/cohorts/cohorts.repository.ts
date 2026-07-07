@@ -60,6 +60,22 @@ const findCohortByPublicSlug = (publicSlug: string) => {
   });
 };
 
+const findPublicCohortBySlug = (publicSlug: string) => {
+  return prismaClient.cohort.findUnique({
+    where: { publicSlug },
+    include: {
+      formFields: {
+        include: {
+          options: {
+            orderBy: { sortOrder: 'asc' },
+          },
+        },
+        orderBy: { sortOrder: 'asc' },
+      },
+    },
+  });
+};
+
 const listCohorts = ({ skip, take }: ListCohortsParams) => {
   return prismaClient.cohort.findMany({
     orderBy: { startsAt: 'desc' },
@@ -129,6 +145,7 @@ export {
   createCohort,
   findCohortById,
   findCohortByPublicSlug,
+  findPublicCohortBySlug,
   getCohortFormFields,
   listCohorts,
   replaceCohortFormFields,
