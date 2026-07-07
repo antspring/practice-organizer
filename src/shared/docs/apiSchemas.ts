@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FormFieldType, UserRole } from '../../generated/prisma/enums';
+import { FormFieldType, PracticeApplicationStatus, UserRole } from '../../generated/prisma/enums';
 
 const errorResponseSchema = z.object({
   message: z.string(),
@@ -96,6 +96,39 @@ const cohortsListResponseSchema = z.object({
   pagination: paginationSchema,
 });
 
+const practiceApplicationAnswerResponseSchema = z.object({
+  id: z.string().uuid(),
+  applicationId: z.string().uuid(),
+  fieldId: z.string().uuid(),
+  optionId: z.string().uuid().nullable(),
+  value: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+const practiceApplicationResponseSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  cohortId: z.string().uuid(),
+  status: z.enum([
+    PracticeApplicationStatus.pending,
+    PracticeApplicationStatus.approved,
+    PracticeApplicationStatus.rejected,
+  ]),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  cohort: cohortResponseSchema,
+  answers: z.array(practiceApplicationAnswerResponseSchema),
+});
+
+const practiceApplicationDetailsResponseSchema = z.object({
+  application: practiceApplicationResponseSchema,
+});
+
+const practiceApplicationsListResponseSchema = z.object({
+  items: z.array(practiceApplicationResponseSchema),
+});
+
 export {
   authResponseSchema,
   cohortDetailsResponseSchema,
@@ -105,6 +138,10 @@ export {
   cohortResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
+  practiceApplicationAnswerResponseSchema,
+  practiceApplicationDetailsResponseSchema,
+  practiceApplicationResponseSchema,
+  practiceApplicationsListResponseSchema,
   publicCohortDetailsResponseSchema,
   publicCohortResponseSchema,
   userResponseSchema,
