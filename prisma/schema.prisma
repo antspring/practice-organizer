@@ -39,14 +39,17 @@ model RefreshToken {
 }
 
 model Cohort {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  startsAt    DateTime @map("starts_at")
-  endsAt      DateTime @map("ends_at")
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id                  String   @id @default(uuid())
+  title               String
+  description         String?
+  publicSlug          String   @unique @map("public_slug")
+  startsAt            DateTime @map("starts_at")
+  endsAt              DateTime @map("ends_at")
+  applicationStartsAt DateTime @map("application_starts_at")
+  applicationEndsAt   DateTime @map("application_ends_at")
+  isActive            Boolean  @default(true) @map("is_active")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   @@map("cohorts")
 }

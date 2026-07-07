@@ -3,16 +3,22 @@ import { prismaClient } from '../../shared/database/prismaClient';
 type CreateCohortData = {
   title: string;
   description?: string;
+  publicSlug: string;
   startsAt: Date;
   endsAt: Date;
+  applicationStartsAt: Date;
+  applicationEndsAt: Date;
   isActive?: boolean;
 };
 
 type UpdateCohortData = {
   title?: string;
   description?: string | null;
+  publicSlug?: string;
   startsAt?: Date;
   endsAt?: Date;
+  applicationStartsAt?: Date;
+  applicationEndsAt?: Date;
   isActive?: boolean;
 };
 
@@ -35,6 +41,12 @@ const findCohortById = (id: string) => {
   });
 };
 
+const findCohortByPublicSlug = (publicSlug: string) => {
+  return prismaClient.cohort.findUnique({
+    where: { publicSlug },
+  });
+};
+
 const listCohorts = ({ skip, take }: ListCohortsParams) => {
   return prismaClient.cohort.findMany({
     orderBy: { startsAt: 'desc' },
@@ -50,4 +62,4 @@ const updateCohort = (id: string, data: UpdateCohortData) => {
   });
 };
 
-export { countCohorts, createCohort, findCohortById, listCohorts, updateCohort };
+export { countCohorts, createCohort, findCohortById, findCohortByPublicSlug, listCohorts, updateCohort };

@@ -1,19 +1,32 @@
 import { AppError } from '../../shared/http/errors/AppError';
-import { countCohorts, createCohort, findCohortById, listCohorts, updateCohort } from './cohorts.repository';
+import {
+  countCohorts,
+  createCohort,
+  findCohortById,
+  findCohortByPublicSlug,
+  listCohorts,
+  updateCohort,
+} from './cohorts.repository';
 
 type CreateCohortInput = {
   title: string;
   description?: string;
+  publicSlug: string;
   startsAt: string;
   endsAt: string;
+  applicationStartsAt: string;
+  applicationEndsAt: string;
   isActive?: boolean;
 };
 
 type UpdateCohortInput = {
   title?: string;
   description?: string | null;
+  publicSlug?: string;
   startsAt?: string;
   endsAt?: string;
+  applicationStartsAt?: string;
+  applicationEndsAt?: string;
   isActive?: boolean;
 };
 
@@ -29,22 +42,41 @@ const toDateRange = ({ startsAt, endsAt }: Pick<CreateCohortInput, 'startsAt' | 
   };
 };
 
-const ensureDateRangeIsValid = (startsAt: Date, endsAt: Date) => {
+const ensureDateRangeIsValid = (startsAt: Date, endsAt: Date, message: string) => {
   if (startsAt >= endsAt) {
-    throw new AppError('startsAt must be earlier than endsAt', 400);
+    throw new AppError(message, 400);
+  }
+};
+
+const ensurePublicSlugIsAvailable = async (publicSlug: string, currentCohortId?: string) => {
+  const cohort = await findCohortByPublicSlug(publicSlug);
+
+  if (cohort && cohort.id !== currentCohortId) {
+    throw new AppError('Cohort public slug already exists', 409);
   }
 };
 
 const createCohortForAdmin = async (input: CreateCohortInput) => {
   const { startsAt, endsAt } = toDateRange(input);
+  const applicationStartsAt = new Date(input.applicationStartsAt);
+  const applicationEndsAt = new Date(input.applicationEndsAt);
 
-  ensureDateRangeIsValid(startsAt, endsAt);
+  ensureDateRangeIsValid(startsAt, endsAt, 'startsAt must be earlier than endsAt');
+  ensureDateRangeIsValid(
+    applicationStartsAt,
+    applicationEndsAt,
+    'applicationStartsAt must be earlier than applicationEndsAt',
+  );
+  await ensurePublicSlugIsAvailable(input.publicSlug);
 
   return createCohort({
     title: input.title,
     description: input.description,
+    publicSlug: input.publicSlug,
     startsAt,
     endsAt,
+    applicationStartsAt,
+    applicationEndsAt,
     isActive: input.isActive,
   });
 };
@@ -78,14 +110,30 @@ const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
   const cohort = await getCohortById(id);
   const startsAt = input.startsAt ? new Date(input.startsAt) : cohort.startsAt;
   const endsAt = input.endsAt ? new Date(input.endsAt) : cohort.endsAt;
+  const applicationStartsAt = input.applicationStartsAt
+    ? new Date(input.applicationStartsAt)
+    : cohort.applicationStartsAt;
+  const applicationEndsAt = input.applicationEndsAt ? new Date(input.applicationEndsAt) : cohort.applicationEndsAt;
 
-  ensureDateRangeIsValid(startsAt, endsAt);
+  ensureDateRangeIsValid(startsAt, endsAt, 'startsAt must be earlier than endsAt');
+  ensureDateRangeIsValid(
+    applicationStartsAt,
+    applicationEndsAt,
+    'applicationStartsAt must be earlier than applicationEndsAt',
+  );
+
+  if (input.publicSlug) {
+    await ensurePublicSlugIsAvailable(input.publicSlug, id);
+  }
 
   return updateCohort(id, {
     title: input.title,
     description: input.description,
+    publicSlug: input.publicSlug,
     startsAt: input.startsAt ? startsAt : undefined,
     endsAt: input.endsAt ? endsAt : undefined,
+    applicationStartsAt: input.applicationStartsAt ? applicationStartsAt : undefined,
+    applicationEndsAt: input.applicationEndsAt ? applicationEndsAt : undefined,
     isActive: input.isActive,
   });
 };
