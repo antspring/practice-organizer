@@ -6,13 +6,16 @@ import {
   createCohortSchema,
   listCohortsQuerySchema,
   publicCohortParamsSchema,
+  replaceCohortFormSchema,
   updateCohortSchema,
 } from './cohorts.schemas';
 import {
   createCohortForAdmin,
   getCohortById,
+  getCohortFormForAdmin,
   getPublicCohortBySlug,
   listCohortsForUser,
+  replaceCohortFormForAdmin,
   updateCohortForAdmin,
 } from './cohorts.service';
 
@@ -28,6 +31,13 @@ const getCohort: RequestHandler = asyncHandler(async (request, response) => {
   const cohort = await getCohortById(id);
 
   response.status(200).json({ cohort });
+});
+
+const getCohortForm: RequestHandler = asyncHandler(async (request, response) => {
+  const { id } = cohortIdParamsSchema.parse(request.params);
+  const result = await getCohortFormForAdmin(id);
+
+  response.status(200).json(result);
 });
 
 const listCohorts: RequestHandler = asyncHandler(async (request, response) => {
@@ -52,4 +62,12 @@ const updateCohort: RequestHandler = asyncHandler(async (request, response) => {
   response.status(200).json({ cohort });
 });
 
-export { createCohort, getCohort, getPublicCohort, listCohorts, updateCohort };
+const replaceCohortForm: RequestHandler = asyncHandler(async (request, response) => {
+  const { id } = cohortIdParamsSchema.parse(request.params);
+  const data = replaceCohortFormSchema.parse(request.body);
+  const result = await replaceCohortFormForAdmin(id, data);
+
+  response.status(200).json(result);
+});
+
+export { createCohort, getCohort, getCohortForm, getPublicCohort, listCohorts, replaceCohortForm, updateCohort };

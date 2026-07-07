@@ -4,7 +4,9 @@ import {
   createCohort,
   findCohortById,
   findCohortByPublicSlug,
+  getCohortFormFields,
   listCohorts,
+  replaceCohortFormFields,
   updateCohort,
 } from './cohorts.repository';
 
@@ -33,6 +35,20 @@ type UpdateCohortInput = {
 type ListCohortsInput = {
   page: number;
   limit: number;
+};
+
+type ReplaceCohortFormInput = {
+  fields: {
+    label: string;
+    type: 'text' | 'select';
+    isRequired: boolean;
+    sortOrder: number;
+    options: {
+      label: string;
+      value: string;
+      sortOrder: number;
+    }[];
+  }[];
 };
 
 type CohortEntity = NonNullable<Awaited<ReturnType<typeof findCohortByPublicSlug>>>;
@@ -124,6 +140,13 @@ const getPublicCohortBySlug = async (publicSlug: string) => {
   };
 };
 
+const getCohortFormForAdmin = async (cohortId: string) => {
+  await getCohortById(cohortId);
+  const fields = await getCohortFormFields(cohortId);
+
+  return { fields };
+};
+
 const listCohortsForUser = async ({ page, limit }: ListCohortsInput) => {
   const skip = (page - 1) * limit;
   const [items, total] = await Promise.all([listCohorts({ skip, take: limit }), countCohorts()]);
@@ -137,6 +160,13 @@ const listCohortsForUser = async ({ page, limit }: ListCohortsInput) => {
       pages: Math.ceil(total / limit),
     },
   };
+};
+
+const replaceCohortFormForAdmin = async (cohortId: string, input: ReplaceCohortFormInput) => {
+  await getCohortById(cohortId);
+  const fields = await replaceCohortFormFields(cohortId, input.fields);
+
+  return { fields };
 };
 
 const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
@@ -171,4 +201,12 @@ const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
   });
 };
 
-export { createCohortForAdmin, getCohortById, getPublicCohortBySlug, listCohortsForUser, updateCohortForAdmin };
+export {
+  createCohortForAdmin,
+  getCohortById,
+  getCohortFormForAdmin,
+  getPublicCohortBySlug,
+  listCohortsForUser,
+  replaceCohortFormForAdmin,
+  updateCohortForAdmin,
+};

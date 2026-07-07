@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { FormFieldType } from '../../generated/prisma/enums';
+
 const dateTimeSchema = z.string().datetime();
 const publicSlugSchema = z
   .string()
@@ -35,6 +37,56 @@ const publicCohortParamsSchema = z.object({
 const listCohortsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
+const cohortFormFieldOptionSchema = z.object({
+  label: z.string().trim().min(1).max(255),
+  value: z.string().trim().min(1).max(255),
+  sortOrder: z.number().int().min(0).default(0),
+});
+
+const cohortFormFieldSchema = z
+  .object({
+    label: z.string().trim().min(1).max(255),
+    type: z.enum([FormFieldType.text, FormFieldType.select]),
+    isRequired: z.boolean().default(true),
+    sortOrder: z.number().int().min(0).default(0),
+    options: z.array(cohortFormFieldOptionSchema).default([]),
+  })
+  .superRefine((field, context) => {
+    if (field.type === FormFieldType.select && field.options.length === 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Select field must have at least one option',
+        path: ['options'],
+      });
+    }
+
+    if (field.type === FormFieldType.text && field.options.length > 0) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Text field cannot have options',
+        path: ['options'],
+      });
+    }
+
+    const optionValues = new Set<string>();
+
+    field.options.forEach((option, index) => {
+      if (optionValues.has(option.value)) {
+        context.addIssue({
+          code: 'custom',
+          message: 'Option values must be unique within a field',
+          path: ['options', index, 'value'],
+        });
+      }
+
+      optionValues.add(option.value);
+    });
+  });
+
+const replaceCohortFormSchema = z.object({
+  fields: z.array(cohortFormFieldSchema),
 });
 
 const createCohortSchema = z
@@ -85,5 +137,6 @@ export {
   createCohortSchema,
   listCohortsQuerySchema,
   publicCohortParamsSchema,
+  replaceCohortFormSchema,
   updateCohortSchema,
 };

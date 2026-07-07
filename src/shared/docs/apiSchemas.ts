@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { UserRole } from '../../generated/prisma/enums';
+import { FormFieldType, UserRole } from '../../generated/prisma/enums';
 
 const errorResponseSchema = z.object({
   message: z.string(),
@@ -39,6 +39,27 @@ const publicCohortResponseSchema = z.object({
   isApplicationOpen: z.boolean(),
 });
 
+const cohortFormFieldOptionResponseSchema = z.object({
+  id: z.string().uuid(),
+  label: z.string(),
+  value: z.string(),
+  sortOrder: z.number().int(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+const cohortFormFieldResponseSchema = z.object({
+  id: z.string().uuid(),
+  cohortId: z.string().uuid(),
+  label: z.string(),
+  type: z.enum([FormFieldType.text, FormFieldType.select]),
+  isRequired: z.boolean(),
+  sortOrder: z.number().int(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  options: z.array(cohortFormFieldOptionResponseSchema),
+});
+
 const authResponseSchema = z.object({
   user: userResponseSchema,
   accessToken: z.string(),
@@ -65,6 +86,10 @@ const publicCohortDetailsResponseSchema = z.object({
   cohort: publicCohortResponseSchema,
 });
 
+const cohortFormResponseSchema = z.object({
+  fields: z.array(cohortFormFieldResponseSchema),
+});
+
 const cohortsListResponseSchema = z.object({
   items: z.array(cohortResponseSchema),
   pagination: paginationSchema,
@@ -73,6 +98,9 @@ const cohortsListResponseSchema = z.object({
 export {
   authResponseSchema,
   cohortDetailsResponseSchema,
+  cohortFormFieldOptionResponseSchema,
+  cohortFormFieldResponseSchema,
+  cohortFormResponseSchema,
   cohortResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
