@@ -37,3 +37,16 @@ model RefreshToken {
   @@index([userId])
   @@map("refresh_tokens")
 }
+
+model Cohort {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  startsAt    DateTime @map("starts_at")
+  endsAt      DateTime @map("ends_at")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("cohorts")
+}
