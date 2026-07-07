@@ -11,6 +11,8 @@ import {
   cohortResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
+  publicCohortDetailsResponseSchema,
+  publicCohortResponseSchema,
   userResponseSchema,
   usersListResponseSchema,
 } from './apiSchemas';
@@ -26,10 +28,12 @@ const createOpenApiRegistry = () => {
 
   registry.register('User', userResponseSchema);
   registry.register('Cohort', cohortResponseSchema);
+  registry.register('PublicCohort', publicCohortResponseSchema);
   registry.register('AuthResponse', authResponseSchema);
   registry.register('CohortDetailsResponse', cohortDetailsResponseSchema);
   registry.register('CohortsListResponse', cohortsListResponseSchema);
   registry.register('ErrorResponse', errorResponseSchema);
+  registry.register('PublicCohortDetailsResponse', publicCohortDetailsResponseSchema);
   registry.register('UsersListResponse', usersListResponseSchema);
 
   registerHealthDocs(registry);

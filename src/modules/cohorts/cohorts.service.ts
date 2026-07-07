@@ -35,6 +35,8 @@ type ListCohortsInput = {
   limit: number;
 };
 
+type CohortEntity = NonNullable<Awaited<ReturnType<typeof findCohortByPublicSlug>>>;
+
 const toDateRange = ({ startsAt, endsAt }: Pick<CreateCohortInput, 'startsAt' | 'endsAt'>) => {
   return {
     startsAt: new Date(startsAt),
@@ -54,6 +56,25 @@ const ensurePublicSlugIsAvailable = async (publicSlug: string, currentCohortId?:
   if (cohort && cohort.id !== currentCohortId) {
     throw new AppError('Cohort public slug already exists', 409);
   }
+};
+
+const isApplicationOpen = (cohort: CohortEntity) => {
+  const now = new Date();
+
+  return cohort.applicationStartsAt <= now && cohort.applicationEndsAt >= now;
+};
+
+const toPublicCohortResponse = (cohort: CohortEntity) => {
+  return {
+    id: cohort.id,
+    title: cohort.title,
+    description: cohort.description,
+    startsAt: cohort.startsAt,
+    endsAt: cohort.endsAt,
+    applicationStartsAt: cohort.applicationStartsAt,
+    applicationEndsAt: cohort.applicationEndsAt,
+    isApplicationOpen: isApplicationOpen(cohort),
+  };
 };
 
 const createCohortForAdmin = async (input: CreateCohortInput) => {
@@ -89,6 +110,18 @@ const getCohortById = async (id: string) => {
   }
 
   return cohort;
+};
+
+const getPublicCohortBySlug = async (publicSlug: string) => {
+  const cohort = await findCohortByPublicSlug(publicSlug);
+
+  if (!cohort || !cohort.isActive) {
+    throw new AppError('Cohort not found', 404);
+  }
+
+  return {
+    cohort: toPublicCohortResponse(cohort),
+  };
 };
 
 const listCohortsForUser = async ({ page, limit }: ListCohortsInput) => {
@@ -138,4 +171,4 @@ const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
   });
 };
 
-export { createCohortForAdmin, getCohortById, listCohortsForUser, updateCohortForAdmin };
+export { createCohortForAdmin, getCohortById, getPublicCohortBySlug, listCohortsForUser, updateCohortForAdmin };

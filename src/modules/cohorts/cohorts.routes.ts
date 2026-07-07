@@ -2,10 +2,11 @@ import { Router } from 'express';
 
 import { UserRole } from '../../generated/prisma/enums';
 import { authenticate, authorize } from '../auth/auth.middleware';
-import { createCohort, getCohort, listCohorts, updateCohort } from './cohorts.controller';
+import { createCohort, getCohort, getPublicCohort, listCohorts, updateCohort } from './cohorts.controller';
 
 const cohortsRouter = Router();
 
+cohortsRouter.get('/public/:publicSlug', getPublicCohort);
 cohortsRouter.use(authenticate);
 cohortsRouter.get('/', listCohorts);
 cohortsRouter.get('/:id', getCohort);

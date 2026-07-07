@@ -28,6 +28,10 @@ const cohortIdParamsSchema = z.object({
   id: z.string().uuid(),
 });
 
+const publicCohortParamsSchema = z.object({
+  publicSlug: publicSlugSchema,
+});
+
 const listCohortsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -76,4 +80,10 @@ const updateCohortSchema = z
     path: ['applicationEndsAt'],
   });
 
-export { cohortIdParamsSchema, createCohortSchema, listCohortsQuerySchema, updateCohortSchema };
+export {
+  cohortIdParamsSchema,
+  createCohortSchema,
+  listCohortsQuerySchema,
+  publicCohortParamsSchema,
+  updateCohortSchema,
+};

@@ -5,11 +5,13 @@ import {
   cohortDetailsResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
+  publicCohortDetailsResponseSchema,
 } from '../../shared/docs/apiSchemas';
 import {
   cohortIdParamsSchema,
   createCohortSchema,
   listCohortsQuerySchema,
+  publicCohortParamsSchema,
   updateCohortSchema,
 } from './cohorts.schemas';
 
@@ -20,6 +22,26 @@ const jsonContent = (schema: ZodType) => ({
 });
 
 const registerCohortsDocs = (registry: OpenAPIRegistry) => {
+  registry.registerPath({
+    method: 'get',
+    path: '/cohorts/public/{publicSlug}',
+    tags: ['Public'],
+    summary: 'Get public cohort by slug',
+    request: {
+      params: publicCohortParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Public cohort details',
+        content: jsonContent(publicCohortDetailsResponseSchema),
+      },
+      404: {
+        description: 'Cohort not found',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
   registry.registerPath({
     method: 'get',
     path: '/cohorts',

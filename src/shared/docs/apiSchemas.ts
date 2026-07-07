@@ -28,6 +28,17 @@ const cohortResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const publicCohortResponseSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  description: z.string().nullable(),
+  startsAt: z.string().datetime(),
+  endsAt: z.string().datetime(),
+  applicationStartsAt: z.string().datetime(),
+  applicationEndsAt: z.string().datetime(),
+  isApplicationOpen: z.boolean(),
+});
+
 const authResponseSchema = z.object({
   user: userResponseSchema,
   accessToken: z.string(),
@@ -50,6 +61,10 @@ const cohortDetailsResponseSchema = z.object({
   cohort: cohortResponseSchema,
 });
 
+const publicCohortDetailsResponseSchema = z.object({
+  cohort: publicCohortResponseSchema,
+});
+
 const cohortsListResponseSchema = z.object({
   items: z.array(cohortResponseSchema),
   pagination: paginationSchema,
@@ -61,6 +76,8 @@ export {
   cohortResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
+  publicCohortDetailsResponseSchema,
+  publicCohortResponseSchema,
   userResponseSchema,
   usersListResponseSchema,
 };
