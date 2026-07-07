@@ -10,8 +10,10 @@ import {
 import {
   applicationAutofillParamsSchema,
   applicationIdParamsSchema,
+  cohortApplicationsParamsSchema,
   createApplicationSchema,
   updateApplicationSchema,
+  updateApplicationStatusSchema,
 } from './applications.schemas';
 
 const jsonContent = (schema: ZodType) => ({
@@ -21,6 +23,35 @@ const jsonContent = (schema: ZodType) => ({
 });
 
 const registerApplicationsDocs = (registry: OpenAPIRegistry) => {
+  registry.registerPath({
+    method: 'get',
+    path: '/applications/cohorts/{cohortId}',
+    tags: ['Applications'],
+    summary: 'List cohort applications',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: cohortApplicationsParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Cohort applications',
+        content: jsonContent(practiceApplicationsListResponseSchema),
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: jsonContent(errorResponseSchema),
+      },
+      403: {
+        description: 'Forbidden',
+        content: jsonContent(errorResponseSchema),
+      },
+      404: {
+        description: 'Cohort not found',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
   registry.registerPath({
     method: 'get',
     path: '/applications/me',
@@ -111,6 +142,43 @@ const registerApplicationsDocs = (registry: OpenAPIRegistry) => {
       },
       409: {
         description: 'Application already exists',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'patch',
+    path: '/applications/{id}/status',
+    tags: ['Applications'],
+    summary: 'Update application status',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: applicationIdParamsSchema,
+      body: {
+        required: true,
+        content: jsonContent(updateApplicationStatusSchema),
+      },
+    },
+    responses: {
+      200: {
+        description: 'Practice application status updated',
+        content: jsonContent(practiceApplicationDetailsResponseSchema),
+      },
+      400: {
+        description: 'Validation error',
+        content: jsonContent(errorResponseSchema),
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: jsonContent(errorResponseSchema),
+      },
+      403: {
+        description: 'Forbidden',
+        content: jsonContent(errorResponseSchema),
+      },
+      404: {
+        description: 'Application not found',
         content: jsonContent(errorResponseSchema),
       },
     },

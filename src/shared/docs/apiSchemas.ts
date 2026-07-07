@@ -119,6 +119,7 @@ const practiceApplicationResponseSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   cohort: cohortResponseSchema,
+  user: userResponseSchema.optional(),
   answers: z.array(practiceApplicationAnswerResponseSchema),
 });
 

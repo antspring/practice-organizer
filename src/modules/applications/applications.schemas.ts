@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { PracticeApplicationStatus } from '../../generated/prisma/enums';
+
 const applicationAnswerSchema = z.object({
   fieldId: z.string().uuid(),
   value: z.string().trim().min(1).max(2000).optional(),
@@ -33,6 +35,10 @@ const applicationAutofillParamsSchema = z.object({
   cohortId: z.string().uuid(),
 });
 
+const cohortApplicationsParamsSchema = z.object({
+  cohortId: z.string().uuid(),
+});
+
 const createApplicationSchema = z
   .object({
     cohortId: z.string().uuid(),
@@ -46,4 +52,19 @@ const updateApplicationSchema = z
   })
   .superRefine(validateAnswerFieldIdsAreUnique);
 
-export { applicationAutofillParamsSchema, applicationIdParamsSchema, createApplicationSchema, updateApplicationSchema };
+const updateApplicationStatusSchema = z.object({
+  status: z.enum([
+    PracticeApplicationStatus.pending,
+    PracticeApplicationStatus.approved,
+    PracticeApplicationStatus.rejected,
+  ]),
+});
+
+export {
+  applicationAutofillParamsSchema,
+  applicationIdParamsSchema,
+  cohortApplicationsParamsSchema,
+  createApplicationSchema,
+  updateApplicationSchema,
+  updateApplicationStatusSchema,
+};

@@ -4,10 +4,13 @@ import { findCohortById, getCohortFormFields } from '../cohorts/cohorts.reposito
 import {
   createApplication,
   findApplicationById,
+  findApplicationDetailsById,
   findApplicationByUserAndCohort,
   findLatestPreviousApplicationWithAnswers,
+  listApplicationsByCohort,
   listApplicationsByUser,
   replaceApplicationAnswers,
+  updateApplicationStatus,
 } from './applications.repository';
 
 type CreateApplicationInput = {
@@ -25,6 +28,10 @@ type AutofillAnswer = {
   fieldId: string;
   value?: string;
   optionId?: string;
+};
+
+type UpdateApplicationStatusInput = {
+  status: PracticeApplicationStatus;
 };
 
 const isApplicationOpen = (applicationStartsAt: Date, applicationEndsAt: Date) => {
@@ -143,6 +150,30 @@ const listCurrentUserApplications = async (userId: string) => {
   return { items };
 };
 
+const listCohortApplicationsForAdmin = async (cohortId: string) => {
+  const cohort = await findCohortById(cohortId);
+
+  if (!cohort) {
+    throw new AppError('Cohort not found', 404);
+  }
+
+  const items = await listApplicationsByCohort(cohortId);
+
+  return { items };
+};
+
+const updateApplicationStatusForAdmin = async (applicationId: string, input: UpdateApplicationStatusInput) => {
+  const application = await findApplicationDetailsById(applicationId);
+
+  if (!application) {
+    throw new AppError('Application not found', 404);
+  }
+
+  const updatedApplication = await updateApplicationStatus(applicationId, input.status);
+
+  return { application: updatedApplication };
+};
+
 const getApplicationAutofillForStudent = async (userId: string, cohortId: string) => {
   const cohort = await findCohortById(cohortId);
 
@@ -196,6 +227,8 @@ const updateApplicationForStudent = async (
 export {
   createApplicationForStudent,
   getApplicationAutofillForStudent,
+  listCohortApplicationsForAdmin,
   listCurrentUserApplications,
+  updateApplicationStatusForAdmin,
   updateApplicationForStudent,
 };
