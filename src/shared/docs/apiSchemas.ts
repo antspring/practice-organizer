@@ -14,6 +14,17 @@ const userResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const cohortResponseSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  description: z.string().nullable(),
+  startsAt: z.string().datetime(),
+  endsAt: z.string().datetime(),
+  isActive: z.boolean(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const authResponseSchema = z.object({
   user: userResponseSchema,
   accessToken: z.string(),
@@ -32,4 +43,21 @@ const usersListResponseSchema = z.object({
   pagination: paginationSchema,
 });
 
-export { authResponseSchema, errorResponseSchema, userResponseSchema, usersListResponseSchema };
+const cohortDetailsResponseSchema = z.object({
+  cohort: cohortResponseSchema,
+});
+
+const cohortsListResponseSchema = z.object({
+  items: z.array(cohortResponseSchema),
+  pagination: paginationSchema,
+});
+
+export {
+  authResponseSchema,
+  cohortDetailsResponseSchema,
+  cohortResponseSchema,
+  cohortsListResponseSchema,
+  errorResponseSchema,
+  userResponseSchema,
+  usersListResponseSchema,
+};
