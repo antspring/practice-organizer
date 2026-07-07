@@ -1,9 +1,15 @@
 import { RequestHandler } from 'express';
 
 import { asyncHandler } from '../../shared/http/middlewares/asyncHandler';
-import { applicationIdParamsSchema, createApplicationSchema, updateApplicationSchema } from './applications.schemas';
+import {
+  applicationAutofillParamsSchema,
+  applicationIdParamsSchema,
+  createApplicationSchema,
+  updateApplicationSchema,
+} from './applications.schemas';
 import {
   createApplicationForStudent,
+  getApplicationAutofillForStudent,
   listCurrentUserApplications,
   updateApplicationForStudent,
 } from './applications.service';
@@ -21,6 +27,13 @@ const listMyApplications: RequestHandler = asyncHandler(async (_request, respons
   response.status(200).json(result);
 });
 
+const getApplicationAutofill: RequestHandler = asyncHandler(async (request, response) => {
+  const { cohortId } = applicationAutofillParamsSchema.parse(request.params);
+  const result = await getApplicationAutofillForStudent(response.locals.user.id, cohortId);
+
+  response.status(200).json(result);
+});
+
 const updateApplication: RequestHandler = asyncHandler(async (request, response) => {
   const { id } = applicationIdParamsSchema.parse(request.params);
   const data = updateApplicationSchema.parse(request.body);
@@ -29,4 +42,4 @@ const updateApplication: RequestHandler = asyncHandler(async (request, response)
   response.status(200).json(result);
 });
 
-export { createApplication, listMyApplications, updateApplication };
+export { createApplication, getApplicationAutofill, listMyApplications, updateApplication };

@@ -40,6 +40,7 @@ type ListCohortsInput = {
 
 type ReplaceCohortFormInput = {
   fields: {
+    key: string;
     label: string;
     type: 'text' | 'select';
     isRequired: boolean;

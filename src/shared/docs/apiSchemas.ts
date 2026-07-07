@@ -40,6 +40,7 @@ const cohortFormFieldOptionResponseSchema = z.object({
 const cohortFormFieldResponseSchema = z.object({
   id: z.string().uuid(),
   cohortId: z.string().uuid(),
+  key: z.string(),
   label: z.string(),
   type: z.enum([FormFieldType.text, FormFieldType.select]),
   isRequired: z.boolean(),
@@ -129,7 +130,19 @@ const practiceApplicationsListResponseSchema = z.object({
   items: z.array(practiceApplicationResponseSchema),
 });
 
+const applicationAutofillAnswerResponseSchema = z.object({
+  fieldId: z.string().uuid(),
+  value: z.string().optional(),
+  optionId: z.string().uuid().optional(),
+});
+
+const applicationAutofillResponseSchema = z.object({
+  answers: z.array(applicationAutofillAnswerResponseSchema),
+});
+
 export {
+  applicationAutofillAnswerResponseSchema,
+  applicationAutofillResponseSchema,
   authResponseSchema,
   cohortDetailsResponseSchema,
   cohortFormFieldOptionResponseSchema,

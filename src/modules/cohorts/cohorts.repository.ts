@@ -29,6 +29,7 @@ type ListCohortsParams = {
 };
 
 type ReplaceCohortFormFieldData = {
+  key: string;
   label: string;
   type: FormFieldType;
   isRequired: boolean;
@@ -106,6 +107,7 @@ const replaceCohortFormFields = async (cohortId: string, fields: ReplaceCohortFo
       await transaction.cohortFormField.create({
         data: {
           cohortId,
+          key: field.key,
           label: field.label,
           type: field.type,
           isRequired: field.isRequired,

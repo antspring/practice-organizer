@@ -7,6 +7,8 @@ import { registerCohortsDocs } from '../../modules/cohorts/cohorts.docs';
 import { registerHealthDocs } from '../../modules/health/health.docs';
 import { registerUsersDocs } from '../../modules/users/users.docs';
 import {
+  applicationAutofillAnswerResponseSchema,
+  applicationAutofillResponseSchema,
   authResponseSchema,
   cohortDetailsResponseSchema,
   cohortFormFieldOptionResponseSchema,
@@ -35,6 +37,8 @@ const createOpenApiRegistry = () => {
   });
 
   registry.register('User', userResponseSchema);
+  registry.register('ApplicationAutofillAnswer', applicationAutofillAnswerResponseSchema);
+  registry.register('ApplicationAutofillResponse', applicationAutofillResponseSchema);
   registry.register('Cohort', cohortResponseSchema);
   registry.register('CohortFormField', cohortFormFieldResponseSchema);
   registry.register('CohortFormFieldOption', cohortFormFieldOptionResponseSchema);

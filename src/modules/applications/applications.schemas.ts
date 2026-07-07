@@ -6,24 +6,31 @@ const applicationAnswerSchema = z.object({
   optionId: z.string().uuid().optional(),
 });
 
-const validateAnswerFieldIdsAreUnique = <T extends { answers: { fieldId: string }[] }>(data: T, context: z.RefinementCtx) => {
-    const fieldIds = new Set<string>();
+const validateAnswerFieldIdsAreUnique = <T extends { answers: { fieldId: string }[] }>(
+  data: T,
+  context: z.RefinementCtx,
+) => {
+  const fieldIds = new Set<string>();
 
-    data.answers.forEach((answer, index) => {
-      if (fieldIds.has(answer.fieldId)) {
-        context.addIssue({
-          code: 'custom',
-          message: 'Answer fieldId must be unique',
-          path: ['answers', index, 'fieldId'],
-        });
-      }
+  data.answers.forEach((answer, index) => {
+    if (fieldIds.has(answer.fieldId)) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Answer fieldId must be unique',
+        path: ['answers', index, 'fieldId'],
+      });
+    }
 
-      fieldIds.add(answer.fieldId);
-    });
+    fieldIds.add(answer.fieldId);
+  });
 };
 
 const applicationIdParamsSchema = z.object({
   id: z.string().uuid(),
+});
+
+const applicationAutofillParamsSchema = z.object({
+  cohortId: z.string().uuid(),
 });
 
 const createApplicationSchema = z
@@ -39,4 +46,4 @@ const updateApplicationSchema = z
   })
   .superRefine(validateAnswerFieldIdsAreUnique);
 
-export { applicationIdParamsSchema, createApplicationSchema, updateApplicationSchema };
+export { applicationAutofillParamsSchema, applicationIdParamsSchema, createApplicationSchema, updateApplicationSchema };

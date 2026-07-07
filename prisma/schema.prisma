@@ -72,6 +72,7 @@ model Cohort {
 model CohortFormField {
   id         String        @id @default(uuid())
   cohortId   String        @map("cohort_id")
+  key        String
   label      String
   type       FormFieldType
   isRequired Boolean       @default(true) @map("is_required")
@@ -84,6 +85,7 @@ model CohortFormField {
   answers PracticeApplicationAnswer[]
 
   @@index([cohortId])
+  @@unique([cohortId, key])
   @@map("cohort_form_fields")
 }
 

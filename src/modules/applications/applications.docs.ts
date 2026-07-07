@@ -2,11 +2,17 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { ZodType } from 'zod';
 
 import {
+  applicationAutofillResponseSchema,
   errorResponseSchema,
   practiceApplicationDetailsResponseSchema,
   practiceApplicationsListResponseSchema,
 } from '../../shared/docs/apiSchemas';
-import { applicationIdParamsSchema, createApplicationSchema, updateApplicationSchema } from './applications.schemas';
+import {
+  applicationAutofillParamsSchema,
+  applicationIdParamsSchema,
+  createApplicationSchema,
+  updateApplicationSchema,
+} from './applications.schemas';
 
 const jsonContent = (schema: ZodType) => ({
   'application/json': {
@@ -57,6 +63,39 @@ const registerApplicationsDocs = (registry: OpenAPIRegistry) => {
       400: {
         description: 'Validation error',
         content: jsonContent(errorResponseSchema),
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: jsonContent(errorResponseSchema),
+      },
+      403: {
+        description: 'Forbidden',
+        content: jsonContent(errorResponseSchema),
+      },
+      404: {
+        description: 'Cohort not found',
+        content: jsonContent(errorResponseSchema),
+      },
+      409: {
+        description: 'Application already exists',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'get',
+    path: '/applications/autofill/{cohortId}',
+    tags: ['Applications'],
+    summary: 'Get autofill answers for new application',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: applicationAutofillParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Autofill answers',
+        content: jsonContent(applicationAutofillResponseSchema),
       },
       401: {
         description: 'Missing or invalid access token',

@@ -32,6 +32,26 @@ const findApplicationById = (id: string) => {
   });
 };
 
+const findLatestPreviousApplicationWithAnswers = (userId: string, excludedCohortId: string) => {
+  return prismaClient.practiceApplication.findFirst({
+    where: {
+      userId,
+      cohortId: {
+        not: excludedCohortId,
+      },
+    },
+    include: {
+      answers: {
+        include: {
+          field: true,
+          option: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+};
+
 const createApplication = ({ userId, cohortId, answers }: CreateApplicationData) => {
   return prismaClient.practiceApplication.create({
     data: {
@@ -122,4 +142,11 @@ const listApplicationsByUser = (userId: string) => {
   });
 };
 
-export { createApplication, findApplicationById, findApplicationByUserAndCohort, listApplicationsByUser, replaceApplicationAnswers };
+export {
+  createApplication,
+  findApplicationById,
+  findApplicationByUserAndCohort,
+  findLatestPreviousApplicationWithAnswers,
+  listApplicationsByUser,
+  replaceApplicationAnswers,
+};
