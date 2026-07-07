@@ -8,6 +8,9 @@ import { registerUsersDocs } from '../../modules/users/users.docs';
 import {
   authResponseSchema,
   cohortDetailsResponseSchema,
+  cohortFormFieldOptionResponseSchema,
+  cohortFormFieldResponseSchema,
+  cohortFormResponseSchema,
   cohortResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
@@ -28,9 +31,12 @@ const createOpenApiRegistry = () => {
 
   registry.register('User', userResponseSchema);
   registry.register('Cohort', cohortResponseSchema);
+  registry.register('CohortFormField', cohortFormFieldResponseSchema);
+  registry.register('CohortFormFieldOption', cohortFormFieldOptionResponseSchema);
   registry.register('PublicCohort', publicCohortResponseSchema);
   registry.register('AuthResponse', authResponseSchema);
   registry.register('CohortDetailsResponse', cohortDetailsResponseSchema);
+  registry.register('CohortFormResponse', cohortFormResponseSchema);
   registry.register('CohortsListResponse', cohortsListResponseSchema);
   registry.register('ErrorResponse', errorResponseSchema);
   registry.register('PublicCohortDetailsResponse', publicCohortDetailsResponseSchema);

@@ -3,6 +3,7 @@ import { ZodType } from 'zod';
 
 import {
   cohortDetailsResponseSchema,
+  cohortFormResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
   publicCohortDetailsResponseSchema,
@@ -12,6 +13,7 @@ import {
   createCohortSchema,
   listCohortsQuerySchema,
   publicCohortParamsSchema,
+  replaceCohortFormSchema,
   updateCohortSchema,
 } from './cohorts.schemas';
 
@@ -89,6 +91,35 @@ const registerCohortsDocs = (registry: OpenAPIRegistry) => {
   });
 
   registry.registerPath({
+    method: 'get',
+    path: '/cohorts/{id}/form',
+    tags: ['Cohorts'],
+    summary: 'Get cohort form fields',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: cohortIdParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Cohort form fields',
+        content: jsonContent(cohortFormResponseSchema),
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: jsonContent(errorResponseSchema),
+      },
+      403: {
+        description: 'Forbidden',
+        content: jsonContent(errorResponseSchema),
+      },
+      404: {
+        description: 'Cohort not found',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
+  registry.registerPath({
     method: 'post',
     path: '/cohorts',
     tags: ['Cohorts'],
@@ -115,6 +146,43 @@ const registerCohortsDocs = (registry: OpenAPIRegistry) => {
       },
       403: {
         description: 'Forbidden',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'put',
+    path: '/cohorts/{id}/form',
+    tags: ['Cohorts'],
+    summary: 'Replace cohort form fields',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: cohortIdParamsSchema,
+      body: {
+        required: true,
+        content: jsonContent(replaceCohortFormSchema),
+      },
+    },
+    responses: {
+      200: {
+        description: 'Cohort form fields replaced',
+        content: jsonContent(cohortFormResponseSchema),
+      },
+      400: {
+        description: 'Validation error',
+        content: jsonContent(errorResponseSchema),
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: jsonContent(errorResponseSchema),
+      },
+      403: {
+        description: 'Forbidden',
+        content: jsonContent(errorResponseSchema),
+      },
+      404: {
+        description: 'Cohort not found',
         content: jsonContent(errorResponseSchema),
       },
     },

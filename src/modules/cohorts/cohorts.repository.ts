@@ -1,3 +1,4 @@
+import { FormFieldType } from '../../generated/prisma/enums';
 import { prismaClient } from '../../shared/database/prismaClient';
 
 type CreateCohortData = {
@@ -27,6 +28,18 @@ type ListCohortsParams = {
   take: number;
 };
 
+type ReplaceCohortFormFieldData = {
+  label: string;
+  type: FormFieldType;
+  isRequired: boolean;
+  sortOrder: number;
+  options: {
+    label: string;
+    value: string;
+    sortOrder: number;
+  }[];
+};
+
 const countCohorts = () => {
   return prismaClient.cohort.count();
 };
@@ -47,11 +60,76 @@ const findCohortByPublicSlug = (publicSlug: string) => {
   });
 };
 
+const findPublicCohortBySlug = (publicSlug: string) => {
+  return prismaClient.cohort.findUnique({
+    where: { publicSlug },
+    include: {
+      formFields: {
+        include: {
+          options: {
+            orderBy: { sortOrder: 'asc' },
+          },
+        },
+        orderBy: { sortOrder: 'asc' },
+      },
+    },
+  });
+};
+
 const listCohorts = ({ skip, take }: ListCohortsParams) => {
   return prismaClient.cohort.findMany({
     orderBy: { startsAt: 'desc' },
     skip,
     take,
+  });
+};
+
+const getCohortFormFields = (cohortId: string) => {
+  return prismaClient.cohortFormField.findMany({
+    where: { cohortId },
+    include: {
+      options: {
+        orderBy: { sortOrder: 'asc' },
+      },
+    },
+    orderBy: { sortOrder: 'asc' },
+  });
+};
+
+const replaceCohortFormFields = async (cohortId: string, fields: ReplaceCohortFormFieldData[]) => {
+  return prismaClient.$transaction(async (transaction) => {
+    await transaction.cohortFormField.deleteMany({
+      where: { cohortId },
+    });
+
+    for (const field of fields) {
+      await transaction.cohortFormField.create({
+        data: {
+          cohortId,
+          label: field.label,
+          type: field.type,
+          isRequired: field.isRequired,
+          sortOrder: field.sortOrder,
+          options: {
+            create: field.options.map((option) => ({
+              label: option.label,
+              value: option.value,
+              sortOrder: option.sortOrder,
+            })),
+          },
+        },
+      });
+    }
+
+    return transaction.cohortFormField.findMany({
+      where: { cohortId },
+      include: {
+        options: {
+          orderBy: { sortOrder: 'asc' },
+        },
+      },
+      orderBy: { sortOrder: 'asc' },
+    });
   });
 };
 
@@ -62,4 +140,14 @@ const updateCohort = (id: string, data: UpdateCohortData) => {
   });
 };
 
-export { countCohorts, createCohort, findCohortById, findCohortByPublicSlug, listCohorts, updateCohort };
+export {
+  countCohorts,
+  createCohort,
+  findCohortById,
+  findCohortByPublicSlug,
+  findPublicCohortBySlug,
+  getCohortFormFields,
+  listCohorts,
+  replaceCohortFormFields,
+  updateCohort,
+};

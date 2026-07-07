@@ -4,7 +4,10 @@ import {
   createCohort,
   findCohortById,
   findCohortByPublicSlug,
+  findPublicCohortBySlug,
+  getCohortFormFields,
   listCohorts,
+  replaceCohortFormFields,
   updateCohort,
 } from './cohorts.repository';
 
@@ -35,7 +38,22 @@ type ListCohortsInput = {
   limit: number;
 };
 
+type ReplaceCohortFormInput = {
+  fields: {
+    label: string;
+    type: 'text' | 'select';
+    isRequired: boolean;
+    sortOrder: number;
+    options: {
+      label: string;
+      value: string;
+      sortOrder: number;
+    }[];
+  }[];
+};
+
 type CohortEntity = NonNullable<Awaited<ReturnType<typeof findCohortByPublicSlug>>>;
+type PublicCohortEntity = NonNullable<Awaited<ReturnType<typeof findPublicCohortBySlug>>>;
 
 const toDateRange = ({ startsAt, endsAt }: Pick<CreateCohortInput, 'startsAt' | 'endsAt'>) => {
   return {
@@ -64,7 +82,7 @@ const isApplicationOpen = (cohort: CohortEntity) => {
   return cohort.applicationStartsAt <= now && cohort.applicationEndsAt >= now;
 };
 
-const toPublicCohortResponse = (cohort: CohortEntity) => {
+const toPublicCohortResponse = (cohort: PublicCohortEntity) => {
   return {
     id: cohort.id,
     title: cohort.title,
@@ -74,6 +92,9 @@ const toPublicCohortResponse = (cohort: CohortEntity) => {
     applicationStartsAt: cohort.applicationStartsAt,
     applicationEndsAt: cohort.applicationEndsAt,
     isApplicationOpen: isApplicationOpen(cohort),
+    form: {
+      fields: cohort.formFields,
+    },
   };
 };
 
@@ -113,7 +134,7 @@ const getCohortById = async (id: string) => {
 };
 
 const getPublicCohortBySlug = async (publicSlug: string) => {
-  const cohort = await findCohortByPublicSlug(publicSlug);
+  const cohort = await findPublicCohortBySlug(publicSlug);
 
   if (!cohort || !cohort.isActive) {
     throw new AppError('Cohort not found', 404);
@@ -122,6 +143,13 @@ const getPublicCohortBySlug = async (publicSlug: string) => {
   return {
     cohort: toPublicCohortResponse(cohort),
   };
+};
+
+const getCohortFormForAdmin = async (cohortId: string) => {
+  await getCohortById(cohortId);
+  const fields = await getCohortFormFields(cohortId);
+
+  return { fields };
 };
 
 const listCohortsForUser = async ({ page, limit }: ListCohortsInput) => {
@@ -137,6 +165,13 @@ const listCohortsForUser = async ({ page, limit }: ListCohortsInput) => {
       pages: Math.ceil(total / limit),
     },
   };
+};
+
+const replaceCohortFormForAdmin = async (cohortId: string, input: ReplaceCohortFormInput) => {
+  await getCohortById(cohortId);
+  const fields = await replaceCohortFormFields(cohortId, input.fields);
+
+  return { fields };
 };
 
 const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
@@ -171,4 +206,12 @@ const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
   });
 };
 
-export { createCohortForAdmin, getCohortById, getPublicCohortBySlug, listCohortsForUser, updateCohortForAdmin };
+export {
+  createCohortForAdmin,
+  getCohortById,
+  getCohortFormForAdmin,
+  getPublicCohortBySlug,
+  listCohortsForUser,
+  replaceCohortFormForAdmin,
+  updateCohortForAdmin,
+};
