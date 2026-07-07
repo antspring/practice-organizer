@@ -1,5 +1,9 @@
 import { prismaClient } from '../../shared/database/prismaClient';
 import { PracticeApplicationStatus } from '../../generated/prisma/enums';
+import {
+  applicationDetailsInclude,
+  applicationWithCohortInclude,
+} from './repositories/applications.includes';
 
 type CreateApplicationAnswerData = {
   fieldId: string;
@@ -36,21 +40,7 @@ const findApplicationById = (id: string) => {
 const findApplicationDetailsById = (id: string) => {
   return prismaClient.practiceApplication.findUnique({
     where: { id },
-    include: {
-      cohort: true,
-      user: true,
-      answers: {
-        include: {
-          field: true,
-          option: true,
-        },
-        orderBy: {
-          field: {
-            sortOrder: 'asc',
-          },
-        },
-      },
-    },
+    include: applicationDetailsInclude,
   });
 };
 
@@ -87,20 +77,7 @@ const createApplication = ({ userId, cohortId, answers }: CreateApplicationData)
         })),
       },
     },
-    include: {
-      cohort: true,
-      answers: {
-        include: {
-          field: true,
-          option: true,
-        },
-        orderBy: {
-          field: {
-            sortOrder: 'asc',
-          },
-        },
-      },
-    },
+    include: applicationWithCohortInclude,
   });
 };
 
@@ -125,20 +102,7 @@ const replaceApplicationAnswers = (applicationId: string, answers: CreateApplica
 
     return transaction.practiceApplication.findUniqueOrThrow({
       where: { id: applicationId },
-      include: {
-        cohort: true,
-        answers: {
-          include: {
-            field: true,
-            option: true,
-          },
-          orderBy: {
-            field: {
-              sortOrder: 'asc',
-            },
-          },
-        },
-      },
+      include: applicationWithCohortInclude,
     });
   });
 };
@@ -146,20 +110,7 @@ const replaceApplicationAnswers = (applicationId: string, answers: CreateApplica
 const listApplicationsByUser = (userId: string) => {
   return prismaClient.practiceApplication.findMany({
     where: { userId },
-    include: {
-      cohort: true,
-      answers: {
-        include: {
-          field: true,
-          option: true,
-        },
-        orderBy: {
-          field: {
-            sortOrder: 'asc',
-          },
-        },
-      },
-    },
+    include: applicationWithCohortInclude,
     orderBy: { createdAt: 'desc' },
   });
 };
@@ -167,21 +118,7 @@ const listApplicationsByUser = (userId: string) => {
 const listApplicationsByCohort = (cohortId: string) => {
   return prismaClient.practiceApplication.findMany({
     where: { cohortId },
-    include: {
-      cohort: true,
-      user: true,
-      answers: {
-        include: {
-          field: true,
-          option: true,
-        },
-        orderBy: {
-          field: {
-            sortOrder: 'asc',
-          },
-        },
-      },
-    },
+    include: applicationDetailsInclude,
     orderBy: { createdAt: 'desc' },
   });
 };
@@ -190,21 +127,7 @@ const updateApplicationStatus = (id: string, status: PracticeApplicationStatus) 
   return prismaClient.practiceApplication.update({
     where: { id },
     data: { status },
-    include: {
-      cohort: true,
-      user: true,
-      answers: {
-        include: {
-          field: true,
-          option: true,
-        },
-        orderBy: {
-          field: {
-            sortOrder: 'asc',
-          },
-        },
-      },
-    },
+    include: applicationDetailsInclude,
   });
 };
 

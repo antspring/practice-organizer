@@ -3,101 +3,15 @@ import {
   countCohorts,
   createCohort,
   findCohortById,
-  findCohortByPublicSlug,
   findPublicCohortBySlug,
   getCohortFormFields,
   listCohorts,
   replaceCohortFormFields,
   updateCohort,
 } from './cohorts.repository';
-
-type CreateCohortInput = {
-  title: string;
-  description?: string;
-  publicSlug: string;
-  startsAt: string;
-  endsAt: string;
-  applicationStartsAt: string;
-  applicationEndsAt: string;
-  isActive?: boolean;
-};
-
-type UpdateCohortInput = {
-  title?: string;
-  description?: string | null;
-  publicSlug?: string;
-  startsAt?: string;
-  endsAt?: string;
-  applicationStartsAt?: string;
-  applicationEndsAt?: string;
-  isActive?: boolean;
-};
-
-type ListCohortsInput = {
-  page: number;
-  limit: number;
-};
-
-type ReplaceCohortFormInput = {
-  fields: {
-    key: string;
-    label: string;
-    type: 'text' | 'select';
-    isRequired: boolean;
-    sortOrder: number;
-    options: {
-      label: string;
-      value: string;
-      sortOrder: number;
-    }[];
-  }[];
-};
-
-type CohortEntity = NonNullable<Awaited<ReturnType<typeof findCohortByPublicSlug>>>;
-type PublicCohortEntity = NonNullable<Awaited<ReturnType<typeof findPublicCohortBySlug>>>;
-
-const toDateRange = ({ startsAt, endsAt }: Pick<CreateCohortInput, 'startsAt' | 'endsAt'>) => {
-  return {
-    startsAt: new Date(startsAt),
-    endsAt: new Date(endsAt),
-  };
-};
-
-const ensureDateRangeIsValid = (startsAt: Date, endsAt: Date, message: string) => {
-  if (startsAt >= endsAt) {
-    throw new AppError(message, 400);
-  }
-};
-
-const ensurePublicSlugIsAvailable = async (publicSlug: string, currentCohortId?: string) => {
-  const cohort = await findCohortByPublicSlug(publicSlug);
-
-  if (cohort && cohort.id !== currentCohortId) {
-    throw new AppError('Cohort public slug already exists', 409);
-  }
-};
-
-const isApplicationOpen = (cohort: CohortEntity) => {
-  const now = new Date();
-
-  return cohort.applicationStartsAt <= now && cohort.applicationEndsAt >= now;
-};
-
-const toPublicCohortResponse = (cohort: PublicCohortEntity) => {
-  return {
-    id: cohort.id,
-    title: cohort.title,
-    description: cohort.description,
-    startsAt: cohort.startsAt,
-    endsAt: cohort.endsAt,
-    applicationStartsAt: cohort.applicationStartsAt,
-    applicationEndsAt: cohort.applicationEndsAt,
-    isApplicationOpen: isApplicationOpen(cohort),
-    form: {
-      fields: cohort.formFields,
-    },
-  };
-};
+import { toPublicCohortResponse } from './presenters/cohorts-public.presenter';
+import { CreateCohortInput, ListCohortsInput, ReplaceCohortFormInput, UpdateCohortInput } from './types/cohorts.types';
+import { ensureDateRangeIsValid, ensurePublicSlugIsAvailable, toDateRange } from './validators/cohorts.validators';
 
 const createCohortForAdmin = async (input: CreateCohortInput) => {
   const { startsAt, endsAt } = toDateRange(input);
