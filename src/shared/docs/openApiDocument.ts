@@ -1,11 +1,14 @@
 import './extendZodWithOpenApi';
 
 import { OpenApiGeneratorV3, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { registerApplicationsDocs } from '../../modules/applications/applications.docs';
 import { registerAuthDocs } from '../../modules/auth/auth.docs';
 import { registerCohortsDocs } from '../../modules/cohorts/cohorts.docs';
 import { registerHealthDocs } from '../../modules/health/health.docs';
 import { registerUsersDocs } from '../../modules/users/users.docs';
 import {
+  applicationAutofillAnswerResponseSchema,
+  applicationAutofillResponseSchema,
   authResponseSchema,
   cohortDetailsResponseSchema,
   cohortFormFieldOptionResponseSchema,
@@ -14,6 +17,10 @@ import {
   cohortResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
+  practiceApplicationAnswerResponseSchema,
+  practiceApplicationDetailsResponseSchema,
+  practiceApplicationResponseSchema,
+  practiceApplicationsListResponseSchema,
   publicCohortDetailsResponseSchema,
   publicCohortResponseSchema,
   userResponseSchema,
@@ -30,6 +37,8 @@ const createOpenApiRegistry = () => {
   });
 
   registry.register('User', userResponseSchema);
+  registry.register('ApplicationAutofillAnswer', applicationAutofillAnswerResponseSchema);
+  registry.register('ApplicationAutofillResponse', applicationAutofillResponseSchema);
   registry.register('Cohort', cohortResponseSchema);
   registry.register('CohortFormField', cohortFormFieldResponseSchema);
   registry.register('CohortFormFieldOption', cohortFormFieldOptionResponseSchema);
@@ -39,10 +48,15 @@ const createOpenApiRegistry = () => {
   registry.register('CohortFormResponse', cohortFormResponseSchema);
   registry.register('CohortsListResponse', cohortsListResponseSchema);
   registry.register('ErrorResponse', errorResponseSchema);
+  registry.register('PracticeApplication', practiceApplicationResponseSchema);
+  registry.register('PracticeApplicationAnswer', practiceApplicationAnswerResponseSchema);
+  registry.register('PracticeApplicationDetailsResponse', practiceApplicationDetailsResponseSchema);
+  registry.register('PracticeApplicationsListResponse', practiceApplicationsListResponseSchema);
   registry.register('PublicCohortDetailsResponse', publicCohortDetailsResponseSchema);
   registry.register('UsersListResponse', usersListResponseSchema);
 
   registerHealthDocs(registry);
+  registerApplicationsDocs(registry);
   registerAuthDocs(registry);
   registerCohortsDocs(registry);
   registerUsersDocs(registry);

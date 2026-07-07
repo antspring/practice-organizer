@@ -3,6 +3,12 @@ import { z } from 'zod';
 import { FormFieldType } from '../../generated/prisma/enums';
 
 const dateTimeSchema = z.string().datetime();
+const formFieldKeySchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(100)
+  .regex(/^[a-z][a-zA-Z0-9]*$/, 'key must be camelCase');
 const publicSlugSchema = z
   .string()
   .trim()
@@ -47,6 +53,7 @@ const cohortFormFieldOptionSchema = z.object({
 
 const cohortFormFieldSchema = z
   .object({
+    key: formFieldKeySchema,
     label: z.string().trim().min(1).max(255),
     type: z.enum([FormFieldType.text, FormFieldType.select]),
     isRequired: z.boolean().default(true),
@@ -87,6 +94,20 @@ const cohortFormFieldSchema = z
 
 const replaceCohortFormSchema = z.object({
   fields: z.array(cohortFormFieldSchema),
+}).superRefine((data, context) => {
+  const keys = new Set<string>();
+
+  data.fields.forEach((field, index) => {
+    if (keys.has(field.key)) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Field keys must be unique within a form',
+        path: ['fields', index, 'key'],
+      });
+    }
+
+    keys.add(field.key);
+  });
 });
 
 const createCohortSchema = z

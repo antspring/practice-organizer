@@ -17,6 +17,12 @@ enum FormFieldType {
   select
 }
 
+enum PracticeApplicationStatus {
+  pending
+  approved
+  rejected
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -25,7 +31,8 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  refreshTokens RefreshToken[]
+  refreshTokens         RefreshToken[]
+  practiceApplications PracticeApplication[]
 
   @@map("users")
 }
@@ -56,7 +63,8 @@ model Cohort {
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
-  formFields CohortFormField[]
+  formFields           CohortFormField[]
+  practiceApplications PracticeApplication[]
 
   @@map("cohorts")
 }
@@ -64,6 +72,7 @@ model Cohort {
 model CohortFormField {
   id         String        @id @default(uuid())
   cohortId   String        @map("cohort_id")
+  key        String
   label      String
   type       FormFieldType
   isRequired Boolean       @default(true) @map("is_required")
@@ -71,10 +80,12 @@ model CohortFormField {
   createdAt  DateTime      @default(now()) @map("created_at")
   updatedAt  DateTime      @updatedAt @map("updated_at")
 
-  cohort  Cohort                  @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  cohort  Cohort                      @relation(fields: [cohortId], references: [id], onDelete: Cascade)
   options CohortFormFieldOption[]
+  answers PracticeApplicationAnswer[]
 
   @@index([cohortId])
+  @@unique([cohortId, key])
   @@map("cohort_form_fields")
 }
 
@@ -87,9 +98,48 @@ model CohortFormFieldOption {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  field CohortFormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  field   CohortFormField            @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  answers PracticeApplicationAnswer[]
 
   @@index([fieldId])
   @@unique([fieldId, value])
   @@map("cohort_form_field_options")
+}
+
+model PracticeApplication {
+  id        String                    @id @default(uuid())
+  userId    String                    @map("user_id")
+  cohortId  String                    @map("cohort_id")
+  status    PracticeApplicationStatus @default(pending)
+  createdAt DateTime                  @default(now()) @map("created_at")
+  updatedAt DateTime                  @updatedAt @map("updated_at")
+
+  user    User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cohort  Cohort                      @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  answers PracticeApplicationAnswer[]
+
+  @@index([cohortId])
+  @@index([userId])
+  @@unique([userId, cohortId])
+  @@map("practice_applications")
+}
+
+model PracticeApplicationAnswer {
+  id            String   @id @default(uuid())
+  applicationId String   @map("application_id")
+  fieldId       String   @map("field_id")
+  optionId      String?  @map("option_id")
+  value         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  application PracticeApplication   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  field       CohortFormField       @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  option      CohortFormFieldOption? @relation(fields: [optionId], references: [id], onDelete: SetNull)
+
+  @@index([applicationId])
+  @@index([fieldId])
+  @@index([optionId])
+  @@unique([applicationId, fieldId])
+  @@map("practice_application_answers")
 }
