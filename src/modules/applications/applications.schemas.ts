@@ -58,6 +58,15 @@ const updateApplicationStatusSchema = z.object({
     PracticeApplicationStatus.approved,
     PracticeApplicationStatus.rejected,
   ]),
+  trackId: z.string().uuid().nullable().optional(),
+}).superRefine((data, context) => {
+  if (data.status === PracticeApplicationStatus.approved && !data.trackId) {
+    context.addIssue({
+      code: 'custom',
+      message: 'trackId is required when application is approved',
+      path: ['trackId'],
+    });
+  }
 });
 
 export {

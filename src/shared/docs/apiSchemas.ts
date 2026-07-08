@@ -145,6 +145,7 @@ const practiceApplicationResponseSchema = z.object({
   id: z.string().uuid(),
   userId: z.string().uuid(),
   cohortId: z.string().uuid(),
+  trackId: z.string().uuid().nullable(),
   status: z.enum([
     PracticeApplicationStatus.pending,
     PracticeApplicationStatus.approved,
@@ -153,6 +154,7 @@ const practiceApplicationResponseSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   cohort: cohortResponseSchema,
+  track: cohortTrackResponseSchema.nullable(),
   user: userResponseSchema.optional(),
   answers: z.array(practiceApplicationAnswerResponseSchema),
 });
