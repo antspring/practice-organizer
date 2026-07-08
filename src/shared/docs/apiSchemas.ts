@@ -28,6 +28,17 @@ const cohortResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const cohortAssignmentResponseSchema = z.object({
+  id: z.string().uuid(),
+  cohortId: z.string().uuid(),
+  title: z.string(),
+  description: z.string().nullable(),
+  content: z.string(),
+  isPublished: z.boolean(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const cohortFormFieldOptionResponseSchema = z.object({
   id: z.string().uuid(),
   label: z.string(),
@@ -70,6 +81,10 @@ const usersListResponseSchema = z.object({
 
 const cohortDetailsResponseSchema = z.object({
   cohort: cohortResponseSchema,
+});
+
+const cohortAssignmentDetailsResponseSchema = z.object({
+  assignment: cohortAssignmentResponseSchema.nullable(),
 });
 
 const cohortFormResponseSchema = z.object({
@@ -145,6 +160,8 @@ export {
   applicationAutofillAnswerResponseSchema,
   applicationAutofillResponseSchema,
   authResponseSchema,
+  cohortAssignmentDetailsResponseSchema,
+  cohortAssignmentResponseSchema,
   cohortDetailsResponseSchema,
   cohortFormFieldOptionResponseSchema,
   cohortFormFieldResponseSchema,
