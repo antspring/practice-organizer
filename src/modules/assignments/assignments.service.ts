@@ -6,6 +6,7 @@ import {
   findPublishedCohortAssignmentByCohortId,
   upsertCohortAssignment,
 } from './assignments.repository';
+import { notifyApplicantsAboutAssignmentPublication } from './services/assignment-notification.service';
 import { UpsertCohortAssignmentInput } from './types/assignments.types';
 
 const getCohortAssignmentForAdmin = async (cohortId: string) => {
@@ -16,8 +17,17 @@ const getCohortAssignmentForAdmin = async (cohortId: string) => {
 };
 
 const upsertCohortAssignmentForAdmin = async (cohortId: string, input: UpsertCohortAssignmentInput) => {
-  await getCohortById(cohortId);
+  const cohort = await getCohortById(cohortId);
+  const previousAssignment = await findCohortAssignmentByCohortId(cohortId);
   const assignment = await upsertCohortAssignment(cohortId, input);
+
+  if (input.isPublished && !previousAssignment?.isPublished) {
+    await notifyApplicantsAboutAssignmentPublication({
+      cohortId,
+      cohortTitle: cohort.title,
+      assignmentTitle: assignment.title,
+    });
+  }
 
   return { assignment };
 };

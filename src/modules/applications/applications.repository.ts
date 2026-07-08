@@ -123,6 +123,19 @@ const listApplicationsByCohort = (cohortId: string) => {
   });
 };
 
+const listApplicationUsersByCohort = (cohortId: string) => {
+  return prismaClient.practiceApplication.findMany({
+    where: { cohortId },
+    select: {
+      user: {
+        select: {
+          email: true,
+        },
+      },
+    },
+  });
+};
+
 const updateApplicationStatus = (id: string, status: PracticeApplicationStatus) => {
   return prismaClient.practiceApplication.update({
     where: { id },
@@ -138,6 +151,7 @@ export {
   findApplicationByUserAndCohort,
   findLatestPreviousApplicationWithAnswers,
   listApplicationsByCohort,
+  listApplicationUsersByCohort,
   listApplicationsByUser,
   replaceApplicationAnswers,
   updateApplicationStatus,
