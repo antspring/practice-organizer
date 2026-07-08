@@ -65,8 +65,24 @@ model Cohort {
 
   formFields           CohortFormField[]
   practiceApplications PracticeApplication[]
+  assignment           CohortAssignment?
 
   @@map("cohorts")
+}
+
+model CohortAssignment {
+  id          String   @id @default(uuid())
+  cohortId    String   @unique @map("cohort_id")
+  title       String
+  description String?
+  content     String
+  isPublished Boolean  @default(false) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  cohort Cohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  @@map("cohort_assignments")
 }
 
 model CohortFormField {
