@@ -7,6 +7,7 @@ const MIN_PORT = 1;
 const MAX_PORT = 65535;
 const DEFAULT_REFRESH_TOKEN_EXPIRES_IN_DAYS = 30;
 const DEFAULT_NODE_ENV = 'development';
+const DEFAULT_MAIL_FROM = 'Practice Organizer <no-reply@example.com>';
 
 const parsePort = (value: string | undefined) => {
   if (!value) {
@@ -46,6 +47,18 @@ const parsePositiveInteger = (value: string | undefined, fallback: number, name:
   return parsedValue;
 };
 
+const parseBoolean = (value: string | undefined) => {
+  return value === 'true';
+};
+
+const getRequiredEnvWhen = (name: string, condition: boolean) => {
+  if (!condition) {
+    return undefined;
+  }
+
+  return getRequiredEnv(name);
+};
+
 export const appConfig = {
   nodeEnv: process.env.NODE_ENV || DEFAULT_NODE_ENV,
   port: parsePort(process.env.PORT),
@@ -57,4 +70,15 @@ export const appConfig = {
     DEFAULT_REFRESH_TOKEN_EXPIRES_IN_DAYS,
     'REFRESH_TOKEN_EXPIRES_IN_DAYS',
   ),
+  mail: {
+    enabled: parseBoolean(process.env.MAIL_ENABLED),
+    from: process.env.MAIL_FROM || DEFAULT_MAIL_FROM,
+    smtp: {
+      host: getRequiredEnvWhen('SMTP_HOST', parseBoolean(process.env.MAIL_ENABLED)),
+      port: parsePositiveInteger(process.env.SMTP_PORT, 587, 'SMTP_PORT'),
+      secure: parseBoolean(process.env.SMTP_SECURE),
+      user: getRequiredEnvWhen('SMTP_USER', parseBoolean(process.env.MAIL_ENABLED)),
+      password: getRequiredEnvWhen('SMTP_PASSWORD', parseBoolean(process.env.MAIL_ENABLED)),
+    },
+  },
 };
