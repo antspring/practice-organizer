@@ -2,6 +2,7 @@ import './extendZodWithOpenApi';
 
 import { OpenApiGeneratorV3, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { registerApplicationsDocs } from '../../modules/applications/applications.docs';
+import { registerAssignmentsDocs } from '../../modules/assignments/assignments.docs';
 import { registerAuthDocs } from '../../modules/auth/auth.docs';
 import { registerCohortsDocs } from '../../modules/cohorts/cohorts.docs';
 import { registerHealthDocs } from '../../modules/health/health.docs';
@@ -10,6 +11,8 @@ import {
   applicationAutofillAnswerResponseSchema,
   applicationAutofillResponseSchema,
   authResponseSchema,
+  cohortAssignmentDetailsResponseSchema,
+  cohortAssignmentResponseSchema,
   cohortDetailsResponseSchema,
   cohortFormFieldOptionResponseSchema,
   cohortFormFieldResponseSchema,
@@ -40,6 +43,8 @@ const createOpenApiRegistry = () => {
   registry.register('ApplicationAutofillAnswer', applicationAutofillAnswerResponseSchema);
   registry.register('ApplicationAutofillResponse', applicationAutofillResponseSchema);
   registry.register('Cohort', cohortResponseSchema);
+  registry.register('CohortAssignment', cohortAssignmentResponseSchema);
+  registry.register('CohortAssignmentDetailsResponse', cohortAssignmentDetailsResponseSchema);
   registry.register('CohortFormField', cohortFormFieldResponseSchema);
   registry.register('CohortFormFieldOption', cohortFormFieldOptionResponseSchema);
   registry.register('PublicCohort', publicCohortResponseSchema);
@@ -57,6 +62,7 @@ const createOpenApiRegistry = () => {
 
   registerHealthDocs(registry);
   registerApplicationsDocs(registry);
+  registerAssignmentsDocs(registry);
   registerAuthDocs(registry);
   registerCohortsDocs(registry);
   registerUsersDocs(registry);
