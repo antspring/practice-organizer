@@ -14,6 +14,16 @@ const userResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const practiceProfileResponseSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  fullName: z.string().nullable(),
+  specialty: z.string().nullable(),
+  group: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const cohortResponseSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -88,6 +98,10 @@ const paginationSchema = z.object({
 const usersListResponseSchema = z.object({
   items: z.array(userResponseSchema),
   pagination: paginationSchema,
+});
+
+const practiceProfileDetailsResponseSchema = z.object({
+  profile: practiceProfileResponseSchema.nullable(),
 });
 
 const cohortDetailsResponseSchema = z.object({
@@ -197,6 +211,8 @@ export {
   practiceApplicationDetailsResponseSchema,
   practiceApplicationResponseSchema,
   practiceApplicationsListResponseSchema,
+  practiceProfileDetailsResponseSchema,
+  practiceProfileResponseSchema,
   publicCohortDetailsResponseSchema,
   publicCohortResponseSchema,
   userResponseSchema,

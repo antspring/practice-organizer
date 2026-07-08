@@ -33,8 +33,23 @@ model User {
 
   refreshTokens         RefreshToken[]
   practiceApplications PracticeApplication[]
+  practiceProfile      PracticeProfile?
 
   @@map("users")
+}
+
+model PracticeProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  fullName  String?  @map("full_name")
+  specialty String?
+  group     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("practice_profiles")
 }
 
 model RefreshToken {
