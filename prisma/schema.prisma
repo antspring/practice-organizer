@@ -66,8 +66,27 @@ model Cohort {
   formFields           CohortFormField[]
   practiceApplications PracticeApplication[]
   assignment           CohortAssignment?
+  tracks               CohortTrack[]
 
   @@map("cohorts")
+}
+
+model CohortTrack {
+  id          String   @id @default(uuid())
+  cohortId    String   @map("cohort_id")
+  title       String
+  description String?
+  sortOrder   Int      @default(0) @map("sort_order")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  cohort               Cohort                @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  practiceApplications PracticeApplication[]
+
+  @@index([cohortId])
+  @@unique([cohortId, title])
+  @@map("cohort_tracks")
 }
 
 model CohortAssignment {
@@ -126,15 +145,18 @@ model PracticeApplication {
   id        String                    @id @default(uuid())
   userId    String                    @map("user_id")
   cohortId  String                    @map("cohort_id")
+  trackId   String?                   @map("track_id")
   status    PracticeApplicationStatus @default(pending)
   createdAt DateTime                  @default(now()) @map("created_at")
   updatedAt DateTime                  @updatedAt @map("updated_at")
 
   user    User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   cohort  Cohort                      @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  track   CohortTrack?                @relation(fields: [trackId], references: [id], onDelete: SetNull)
   answers PracticeApplicationAnswer[]
 
   @@index([cohortId])
+  @@index([trackId])
   @@index([userId])
   @@unique([userId, cohortId])
   @@map("practice_applications")
