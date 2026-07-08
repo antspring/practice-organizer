@@ -12,11 +12,13 @@ const orderedAnswersInclude = {
 
 const applicationWithCohortInclude = {
   cohort: true,
+  track: true,
   answers: orderedAnswersInclude,
 };
 
 const applicationDetailsInclude = {
   cohort: true,
+  track: true,
   user: true,
   answers: orderedAnswersInclude,
 };

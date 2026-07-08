@@ -6,6 +6,7 @@ import { registerAssignmentsDocs } from '../../modules/assignments/assignments.d
 import { registerAuthDocs } from '../../modules/auth/auth.docs';
 import { registerCohortsDocs } from '../../modules/cohorts/cohorts.docs';
 import { registerHealthDocs } from '../../modules/health/health.docs';
+import { registerTracksDocs } from '../../modules/tracks/tracks.docs';
 import { registerUsersDocs } from '../../modules/users/users.docs';
 import {
   applicationAutofillAnswerResponseSchema,
@@ -18,6 +19,9 @@ import {
   cohortFormFieldResponseSchema,
   cohortFormResponseSchema,
   cohortResponseSchema,
+  cohortTrackDetailsResponseSchema,
+  cohortTrackResponseSchema,
+  cohortTracksListResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
   practiceApplicationAnswerResponseSchema,
@@ -47,6 +51,9 @@ const createOpenApiRegistry = () => {
   registry.register('CohortAssignmentDetailsResponse', cohortAssignmentDetailsResponseSchema);
   registry.register('CohortFormField', cohortFormFieldResponseSchema);
   registry.register('CohortFormFieldOption', cohortFormFieldOptionResponseSchema);
+  registry.register('CohortTrack', cohortTrackResponseSchema);
+  registry.register('CohortTrackDetailsResponse', cohortTrackDetailsResponseSchema);
+  registry.register('CohortTracksListResponse', cohortTracksListResponseSchema);
   registry.register('PublicCohort', publicCohortResponseSchema);
   registry.register('AuthResponse', authResponseSchema);
   registry.register('CohortDetailsResponse', cohortDetailsResponseSchema);
@@ -65,6 +72,7 @@ const createOpenApiRegistry = () => {
   registerAssignmentsDocs(registry);
   registerAuthDocs(registry);
   registerCohortsDocs(registry);
+  registerTracksDocs(registry);
   registerUsersDocs(registry);
 
   return registry;

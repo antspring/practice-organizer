@@ -1,5 +1,6 @@
 import { AppError } from '../../../shared/http/errors/AppError';
 import { findCohortById } from '../../cohorts/cohorts.repository';
+import { findTrackById } from '../../tracks/tracks.repository';
 import {
   findApplicationDetailsById,
   listApplicationsByCohort,
@@ -26,7 +27,15 @@ const updateApplicationStatusForAdmin = async (applicationId: string, input: Upd
     throw new AppError('Application not found', 404);
   }
 
-  const updatedApplication = await updateApplicationStatus(applicationId, input.status);
+  if (input.trackId) {
+    const track = await findTrackById(input.trackId);
+
+    if (!track || track.cohortId !== application.cohortId || !track.isActive) {
+      throw new AppError('Track not found', 404);
+    }
+  }
+
+  const updatedApplication = await updateApplicationStatus(applicationId, input.status, input.trackId);
 
   return { application: updatedApplication };
 };

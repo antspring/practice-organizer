@@ -39,6 +39,17 @@ const cohortAssignmentResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const cohortTrackResponseSchema = z.object({
+  id: z.string().uuid(),
+  cohortId: z.string().uuid(),
+  title: z.string(),
+  description: z.string().nullable(),
+  sortOrder: z.number().int(),
+  isActive: z.boolean(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const cohortFormFieldOptionResponseSchema = z.object({
   id: z.string().uuid(),
   label: z.string(),
@@ -87,6 +98,14 @@ const cohortAssignmentDetailsResponseSchema = z.object({
   assignment: cohortAssignmentResponseSchema.nullable(),
 });
 
+const cohortTrackDetailsResponseSchema = z.object({
+  track: cohortTrackResponseSchema,
+});
+
+const cohortTracksListResponseSchema = z.object({
+  items: z.array(cohortTrackResponseSchema),
+});
+
 const cohortFormResponseSchema = z.object({
   fields: z.array(cohortFormFieldResponseSchema),
 });
@@ -126,6 +145,7 @@ const practiceApplicationResponseSchema = z.object({
   id: z.string().uuid(),
   userId: z.string().uuid(),
   cohortId: z.string().uuid(),
+  trackId: z.string().uuid().nullable(),
   status: z.enum([
     PracticeApplicationStatus.pending,
     PracticeApplicationStatus.approved,
@@ -134,6 +154,7 @@ const practiceApplicationResponseSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   cohort: cohortResponseSchema,
+  track: cohortTrackResponseSchema.nullable(),
   user: userResponseSchema.optional(),
   answers: z.array(practiceApplicationAnswerResponseSchema),
 });
@@ -167,6 +188,9 @@ export {
   cohortFormFieldResponseSchema,
   cohortFormResponseSchema,
   cohortResponseSchema,
+  cohortTrackDetailsResponseSchema,
+  cohortTrackResponseSchema,
+  cohortTracksListResponseSchema,
   cohortsListResponseSchema,
   errorResponseSchema,
   practiceApplicationAnswerResponseSchema,

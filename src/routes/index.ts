@@ -5,6 +5,7 @@ import { assignmentsRouter } from '../modules/assignments/assignments.routes';
 import { authRouter } from '../modules/auth/auth.routes';
 import { cohortsRouter } from '../modules/cohorts/cohorts.routes';
 import { healthRouter } from '../modules/health/health.routes';
+import { tracksRouter } from '../modules/tracks/tracks.routes';
 import { usersRouter } from '../modules/users/users.routes';
 
 const router = Router();
@@ -14,6 +15,7 @@ router.use('/assignments', assignmentsRouter);
 router.use('/auth', authRouter);
 router.use('/cohorts', cohortsRouter);
 router.use('/health', healthRouter);
+router.use('/tracks', tracksRouter);
 router.use('/users', usersRouter);
 
 export { router };
