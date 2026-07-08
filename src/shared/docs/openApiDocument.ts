@@ -6,6 +6,7 @@ import { registerAssignmentsDocs } from '../../modules/assignments/assignments.d
 import { registerAuthDocs } from '../../modules/auth/auth.docs';
 import { registerCohortsDocs } from '../../modules/cohorts/cohorts.docs';
 import { registerHealthDocs } from '../../modules/health/health.docs';
+import { registerProfilesDocs } from '../../modules/profiles/profiles.docs';
 import { registerTracksDocs } from '../../modules/tracks/tracks.docs';
 import { registerUsersDocs } from '../../modules/users/users.docs';
 import {
@@ -28,6 +29,8 @@ import {
   practiceApplicationDetailsResponseSchema,
   practiceApplicationResponseSchema,
   practiceApplicationsListResponseSchema,
+  practiceProfileDetailsResponseSchema,
+  practiceProfileResponseSchema,
   publicCohortDetailsResponseSchema,
   publicCohortResponseSchema,
   userResponseSchema,
@@ -64,6 +67,8 @@ const createOpenApiRegistry = () => {
   registry.register('PracticeApplicationAnswer', practiceApplicationAnswerResponseSchema);
   registry.register('PracticeApplicationDetailsResponse', practiceApplicationDetailsResponseSchema);
   registry.register('PracticeApplicationsListResponse', practiceApplicationsListResponseSchema);
+  registry.register('PracticeProfile', practiceProfileResponseSchema);
+  registry.register('PracticeProfileDetailsResponse', practiceProfileDetailsResponseSchema);
   registry.register('PublicCohortDetailsResponse', publicCohortDetailsResponseSchema);
   registry.register('UsersListResponse', usersListResponseSchema);
 
@@ -72,6 +77,7 @@ const createOpenApiRegistry = () => {
   registerAssignmentsDocs(registry);
   registerAuthDocs(registry);
   registerCohortsDocs(registry);
+  registerProfilesDocs(registry);
   registerTracksDocs(registry);
   registerUsersDocs(registry);
 
