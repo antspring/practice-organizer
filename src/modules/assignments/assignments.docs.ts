@@ -13,6 +13,35 @@ const jsonContent = (schema: ZodType) => ({
 const registerAssignmentsDocs = (registry: OpenAPIRegistry) => {
   registry.registerPath({
     method: 'get',
+    path: '/assignments/cohorts/{cohortId}/me',
+    tags: ['Assignments'],
+    summary: 'Get my published cohort assignment',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: cohortAssignmentParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Published cohort assignment',
+        content: jsonContent(cohortAssignmentDetailsResponseSchema),
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: jsonContent(errorResponseSchema),
+      },
+      403: {
+        description: 'Forbidden',
+        content: jsonContent(errorResponseSchema),
+      },
+      404: {
+        description: 'Application or assignment not found',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'get',
     path: '/assignments/cohorts/{cohortId}',
     tags: ['Assignments'],
     summary: 'Get cohort assignment',

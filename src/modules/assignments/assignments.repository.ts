@@ -13,6 +13,15 @@ const findCohortAssignmentByCohortId = (cohortId: string) => {
   });
 };
 
+const findPublishedCohortAssignmentByCohortId = (cohortId: string) => {
+  return prismaClient.cohortAssignment.findFirst({
+    where: {
+      cohortId,
+      isPublished: true,
+    },
+  });
+};
+
 const upsertCohortAssignment = (cohortId: string, data: UpsertCohortAssignmentData) => {
   return prismaClient.cohortAssignment.upsert({
     where: { cohortId },
@@ -24,4 +33,4 @@ const upsertCohortAssignment = (cohortId: string, data: UpsertCohortAssignmentDa
   });
 };
 
-export { findCohortAssignmentByCohortId, upsertCohortAssignment };
+export { findCohortAssignmentByCohortId, findPublishedCohortAssignmentByCohortId, upsertCohortAssignment };

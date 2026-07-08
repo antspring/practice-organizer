@@ -1,5 +1,11 @@
+import { AppError } from '../../shared/http/errors/AppError';
+import { findApplicationByUserAndCohort } from '../applications/applications.repository';
 import { getCohortById } from '../cohorts/cohorts.service';
-import { findCohortAssignmentByCohortId, upsertCohortAssignment } from './assignments.repository';
+import {
+  findCohortAssignmentByCohortId,
+  findPublishedCohortAssignmentByCohortId,
+  upsertCohortAssignment,
+} from './assignments.repository';
 import { UpsertCohortAssignmentInput } from './types/assignments.types';
 
 const getCohortAssignmentForAdmin = async (cohortId: string) => {
@@ -16,4 +22,20 @@ const upsertCohortAssignmentForAdmin = async (cohortId: string, input: UpsertCoh
   return { assignment };
 };
 
-export { getCohortAssignmentForAdmin, upsertCohortAssignmentForAdmin };
+const getPublishedCohortAssignmentForStudent = async (userId: string, cohortId: string) => {
+  const application = await findApplicationByUserAndCohort(userId, cohortId);
+
+  if (!application) {
+    throw new AppError('Application not found', 404);
+  }
+
+  const assignment = await findPublishedCohortAssignmentByCohortId(cohortId);
+
+  if (!assignment) {
+    throw new AppError('Assignment not found', 404);
+  }
+
+  return { assignment };
+};
+
+export { getCohortAssignmentForAdmin, getPublishedCohortAssignmentForStudent, upsertCohortAssignmentForAdmin };
