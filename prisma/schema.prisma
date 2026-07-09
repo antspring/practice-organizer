@@ -31,7 +31,7 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  refreshTokens         RefreshToken[]
+  refreshTokens        RefreshToken[]
   practiceApplications PracticeApplication[]
   practiceProfile      PracticeProfile?
 
@@ -39,13 +39,14 @@ model User {
 }
 
 model PracticeProfile {
-  id        String   @id @default(uuid())
-  userId    String   @unique @map("user_id")
-  fullName  String?  @map("full_name")
-  specialty String?
-  group     String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id               String   @id @default(uuid())
+  userId           String   @unique @map("user_id")
+  fullName         String?  @map("full_name")
+  specialty        String?
+  educationProgram String?  @map("education_program")
+  group            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -99,8 +100,8 @@ model CohortTrack {
   cohort               Cohort                @relation(fields: [cohortId], references: [id], onDelete: Cascade)
   practiceApplications PracticeApplication[]
 
-  @@index([cohortId])
   @@unique([cohortId, title])
+  @@index([cohortId])
   @@map("cohort_tracks")
 }
 
@@ -134,8 +135,8 @@ model CohortFormField {
   options CohortFormFieldOption[]
   answers PracticeApplicationAnswer[]
 
-  @@index([cohortId])
   @@unique([cohortId, key])
+  @@index([cohortId])
   @@map("cohort_form_fields")
 }
 
@@ -148,11 +149,11 @@ model CohortFormFieldOption {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  field   CohortFormField            @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  field   CohortFormField             @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   answers PracticeApplicationAnswer[]
 
-  @@index([fieldId])
   @@unique([fieldId, value])
+  @@index([fieldId])
   @@map("cohort_form_field_options")
 }
 
@@ -170,10 +171,10 @@ model PracticeApplication {
   track   CohortTrack?                @relation(fields: [trackId], references: [id], onDelete: SetNull)
   answers PracticeApplicationAnswer[]
 
+  @@unique([userId, cohortId])
   @@index([cohortId])
   @@index([trackId])
   @@index([userId])
-  @@unique([userId, cohortId])
   @@map("practice_applications")
 }
 
@@ -186,13 +187,13 @@ model PracticeApplicationAnswer {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  application PracticeApplication   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  field       CohortFormField       @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  application PracticeApplication    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  field       CohortFormField        @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   option      CohortFormFieldOption? @relation(fields: [optionId], references: [id], onDelete: SetNull)
 
+  @@unique([applicationId, fieldId])
   @@index([applicationId])
   @@index([fieldId])
   @@index([optionId])
-  @@unique([applicationId, fieldId])
   @@map("practice_application_answers")
 }

@@ -19,7 +19,15 @@ const applicationWithCohortInclude = {
 const applicationDetailsInclude = {
   cohort: true,
   track: true,
-  user: true,
+  user: {
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  },
   answers: orderedAnswersInclude,
 };
 

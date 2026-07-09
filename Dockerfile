@@ -13,6 +13,7 @@ COPY tsconfig.json ./
 COPY prisma.config.ts ./
 COPY prisma ./prisma
 COPY src ./src
+COPY templates ./templates
 
 RUN npm run build
 
@@ -26,6 +27,7 @@ COPY --from=build /app/package*.json ./
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/templates ./templates
 
 EXPOSE 3000
 
