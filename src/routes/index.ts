@@ -4,6 +4,7 @@ import { applicationsRouter } from '../modules/applications/applications.routes'
 import { assignmentsRouter } from '../modules/assignments/assignments.routes';
 import { authRouter } from '../modules/auth/auth.routes';
 import { cohortsRouter } from '../modules/cohorts/cohorts.routes';
+import { documentsRouter } from '../modules/documents/documents.routes';
 import { healthRouter } from '../modules/health/health.routes';
 import { profilesRouter } from '../modules/profiles/profiles.routes';
 import { tracksRouter } from '../modules/tracks/tracks.routes';
@@ -15,6 +16,7 @@ router.use('/applications', applicationsRouter);
 router.use('/assignments', assignmentsRouter);
 router.use('/auth', authRouter);
 router.use('/cohorts', cohortsRouter);
+router.use('/documents', documentsRouter);
 router.use('/health', healthRouter);
 router.use('/profiles', profilesRouter);
 router.use('/tracks', tracksRouter);

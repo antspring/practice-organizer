@@ -3,6 +3,7 @@ import { prismaClient } from '../../shared/database/prismaClient';
 type UpsertPracticeProfileData = {
   fullName?: string | null;
   specialty?: string | null;
+  educationProgram?: string | null;
   group?: string | null;
 };
 

@@ -19,6 +19,7 @@ const practiceProfileResponseSchema = z.object({
   userId: z.string().uuid(),
   fullName: z.string().nullable(),
   specialty: z.string().nullable(),
+  educationProgram: z.string().nullable(),
   group: z.string().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),

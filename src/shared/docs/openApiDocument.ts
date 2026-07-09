@@ -5,6 +5,7 @@ import { registerApplicationsDocs } from '../../modules/applications/application
 import { registerAssignmentsDocs } from '../../modules/assignments/assignments.docs';
 import { registerAuthDocs } from '../../modules/auth/auth.docs';
 import { registerCohortsDocs } from '../../modules/cohorts/cohorts.docs';
+import { registerDocumentsDocs } from '../../modules/documents/documents.docs';
 import { registerHealthDocs } from '../../modules/health/health.docs';
 import { registerProfilesDocs } from '../../modules/profiles/profiles.docs';
 import { registerTracksDocs } from '../../modules/tracks/tracks.docs';
@@ -77,6 +78,7 @@ const createOpenApiRegistry = () => {
   registerAssignmentsDocs(registry);
   registerAuthDocs(registry);
   registerCohortsDocs(registry);
+  registerDocumentsDocs(registry);
   registerProfilesDocs(registry);
   registerTracksDocs(registry);
   registerUsersDocs(registry);
