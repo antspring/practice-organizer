@@ -7,7 +7,8 @@ const findApplicationForDocumentById = (id: string) => {
       cohort: true,
       track: true,
       user: {
-        include: {
+        select: {
+          id: true,
           practiceProfile: true,
         },
       },
