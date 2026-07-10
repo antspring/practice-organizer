@@ -25,6 +25,22 @@ const practiceProfileResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const practiceReviewResponseSchema = z.object({
+  id: z.string().uuid(),
+  applicationId: z.string().uuid(),
+  activities: z.string().nullable(),
+  characteristic: z.string().nullable(),
+  isEmployed: z.boolean().nullable(),
+  employmentPosition: z.string().nullable(),
+  isNextPracticeOffered: z.boolean().nullable(),
+  isEmploymentOffered: z.boolean().nullable(),
+  suggestions: z.string().nullable(),
+  grade: z.string().nullable(),
+  isReady: z.boolean(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const cohortResponseSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -103,6 +119,10 @@ const usersListResponseSchema = z.object({
 
 const practiceProfileDetailsResponseSchema = z.object({
   profile: practiceProfileResponseSchema.nullable(),
+});
+
+const practiceReviewDetailsResponseSchema = z.object({
+  review: practiceReviewResponseSchema.nullable(),
 });
 
 const cohortDetailsResponseSchema = z.object({
@@ -214,6 +234,8 @@ export {
   practiceApplicationsListResponseSchema,
   practiceProfileDetailsResponseSchema,
   practiceProfileResponseSchema,
+  practiceReviewDetailsResponseSchema,
+  practiceReviewResponseSchema,
   publicCohortDetailsResponseSchema,
   publicCohortResponseSchema,
   userResponseSchema,

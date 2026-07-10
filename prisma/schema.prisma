@@ -170,6 +170,7 @@ model PracticeApplication {
   cohort  Cohort                      @relation(fields: [cohortId], references: [id], onDelete: Cascade)
   track   CohortTrack?                @relation(fields: [trackId], references: [id], onDelete: SetNull)
   answers PracticeApplicationAnswer[]
+  review  PracticeReview?
 
   @@unique([userId, cohortId])
   @@index([cohortId])
@@ -196,4 +197,24 @@ model PracticeApplicationAnswer {
   @@index([fieldId])
   @@index([optionId])
   @@map("practice_application_answers")
+}
+
+model PracticeReview {
+  id                    String   @id @default(uuid())
+  applicationId         String   @unique @map("application_id")
+  activities            String?
+  characteristic        String?
+  isEmployed            Boolean? @map("is_employed")
+  employmentPosition    String?  @map("employment_position")
+  isNextPracticeOffered Boolean? @map("is_next_practice_offered")
+  isEmploymentOffered   Boolean? @map("is_employment_offered")
+  suggestions           String?
+  grade                 String?
+  isReady               Boolean  @default(false) @map("is_ready")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  application PracticeApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("practice_reviews")
 }

@@ -1,37 +1,27 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { errorResponseSchema } from '../../shared/docs/apiSchemas';
-import { documentApplicationParamsSchema } from './documents.schemas';
+import { errorResponseSchema, practiceReviewDetailsResponseSchema } from '../../shared/docs/apiSchemas';
+import {
+  reviewApplicationParamsSchema,
+  upsertPracticeReviewBodySchema,
+} from './reviews.schemas';
 
-const docxResponseContent = {
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-    schema: {
-      type: 'string',
-      format: 'binary',
-    },
-  },
-} as const;
-
-const registerDocumentsDocs = (registry: OpenAPIRegistry) => {
+const registerReviewsDocs = (registry: OpenAPIRegistry) => {
   registry.registerPath({
     method: 'get',
-    path: '/documents/applications/{applicationId}/individual-assignment',
-    tags: ['Documents'],
-    summary: 'Download individual assignment document',
+    path: '/reviews/applications/{applicationId}',
+    tags: ['Reviews'],
+    summary: 'Get practice review by application',
     security: [{ bearerAuth: [] }],
     request: {
-      params: documentApplicationParamsSchema,
+      params: reviewApplicationParamsSchema,
     },
     responses: {
       200: {
-        description: 'Individual assignment docx',
-        content: docxResponseContent,
-      },
-      400: {
-        description: 'Application is not ready for document generation',
+        description: 'Practice review details',
         content: {
           'application/json': {
-            schema: errorResponseSchema,
+            schema: practiceReviewDetailsResponseSchema,
           },
         },
       },
@@ -63,21 +53,32 @@ const registerDocumentsDocs = (registry: OpenAPIRegistry) => {
   });
 
   registry.registerPath({
-    method: 'get',
-    path: '/documents/applications/{applicationId}/supervisor-review',
-    tags: ['Documents'],
-    summary: 'Download supervisor review document',
+    method: 'put',
+    path: '/reviews/applications/{applicationId}',
+    tags: ['Reviews'],
+    summary: 'Create or update practice review by application',
     security: [{ bearerAuth: [] }],
     request: {
-      params: documentApplicationParamsSchema,
+      params: reviewApplicationParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: upsertPracticeReviewBodySchema,
+          },
+        },
+      },
     },
     responses: {
       200: {
-        description: 'Supervisor review docx',
-        content: docxResponseContent,
+        description: 'Practice review details',
+        content: {
+          'application/json': {
+            schema: practiceReviewDetailsResponseSchema,
+          },
+        },
       },
       400: {
-        description: 'Application or review is not ready for document generation',
+        description: 'Invalid request body',
         content: {
           'application/json': {
             schema: errorResponseSchema,
@@ -112,4 +113,4 @@ const registerDocumentsDocs = (registry: OpenAPIRegistry) => {
   });
 };
 
-export { registerDocumentsDocs };
+export { registerReviewsDocs };

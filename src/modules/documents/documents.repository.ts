@@ -12,6 +12,7 @@ const findApplicationForDocumentById = (id: string) => {
           practiceProfile: true,
         },
       },
+      review: true,
     },
   });
 };
