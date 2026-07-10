@@ -3,6 +3,15 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { errorResponseSchema } from '../../shared/docs/apiSchemas';
 import { documentApplicationParamsSchema } from './documents.schemas';
 
+const docxResponseContent = {
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+    schema: {
+      type: 'string',
+      format: 'binary',
+    },
+  },
+} as const;
+
 const registerDocumentsDocs = (registry: OpenAPIRegistry) => {
   registry.registerPath({
     method: 'get',
@@ -16,17 +25,59 @@ const registerDocumentsDocs = (registry: OpenAPIRegistry) => {
     responses: {
       200: {
         description: 'Individual assignment docx',
-        content: {
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-            schema: {
-              type: 'string',
-              format: 'binary',
-            },
-          },
-        },
+        content: docxResponseContent,
       },
       400: {
         description: 'Application is not ready for document generation',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      403: {
+        description: 'Forbidden',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Application not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'get',
+    path: '/documents/applications/{applicationId}/supervisor-review',
+    tags: ['Documents'],
+    summary: 'Download supervisor review document',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: documentApplicationParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Supervisor review docx',
+        content: docxResponseContent,
+      },
+      400: {
+        description: 'Application or review is not ready for document generation',
         content: {
           'application/json': {
             schema: errorResponseSchema,
