@@ -1,3 +1,4 @@
+import { UserRole } from '../../generated/prisma/enums';
 import { AppError } from '../../shared/http/errors/AppError';
 import {
   createPracticeTask,
@@ -7,6 +8,7 @@ import {
   findPracticeTaskById,
   findTaskCohortById,
   listPracticeTasksByWeek,
+  listTaskParticipantsByWeek,
   updatePracticeTask,
 } from './tasks.repository';
 
@@ -21,6 +23,11 @@ type UpdateTaskInput = {
   title?: string;
   description?: string;
   artifactLink?: string | null;
+};
+
+type TaskBoardUser = {
+  id: string;
+  role: UserRole;
 };
 
 const WEEKDAY_MONDAY = 1;
@@ -78,6 +85,22 @@ const listMyTasksByWeek = async (userId: string, cohortId: string, weekStart: st
   return listPracticeTasksByWeek(userId, cohortId, startsAt, addUtcDays(startsAt, DAYS_IN_WORK_WEEK - 1));
 };
 
+const listCohortTasksByWeek = async (user: TaskBoardUser, cohortId: string, weekStart: string) => {
+  const startsAt = parseDate(weekStart);
+
+  if (startsAt.getUTCDay() !== WEEKDAY_MONDAY) {
+    throw new AppError('weekStart must be a Monday', 400);
+  }
+
+  await getTaskCohort(cohortId);
+
+  if (user.role === UserRole.student) {
+    await ensureApprovedApplication(user.id, cohortId);
+  }
+
+  return listTaskParticipantsByWeek(cohortId, startsAt, addUtcDays(startsAt, DAYS_IN_WORK_WEEK - 1));
+};
+
 const createMyTask = async (userId: string, cohortId: string, input: CreateTaskInput) => {
   const cohort = await getTaskCohort(cohortId);
   await ensureApprovedApplication(userId, cohortId);
@@ -130,4 +153,4 @@ const deleteMyTask = async (userId: string, taskId: string) => {
   await deletePracticeTask(taskId);
 };
 
-export { createMyTask, deleteMyTask, listMyTasksByWeek, updateMyTask };
+export { createMyTask, deleteMyTask, listCohortTasksByWeek, listMyTasksByWeek, updateMyTask };

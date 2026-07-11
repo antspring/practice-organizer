@@ -17,4 +17,27 @@ const presentPracticeTask = (task: PracticeTaskView) => {
   };
 };
 
-export { presentPracticeTask };
+type TaskParticipantView = {
+  userId: string;
+  track: {
+    id: string;
+    title: string;
+  } | null;
+  user: {
+    practiceProfile: {
+      fullName: string | null;
+    } | null;
+    practiceTasks: PracticeTaskView[];
+  };
+};
+
+const presentTaskParticipant = (participant: TaskParticipantView) => {
+  return {
+    userId: participant.userId,
+    fullName: participant.user.practiceProfile?.fullName ?? null,
+    track: participant.track,
+    tasks: participant.user.practiceTasks.map(presentPracticeTask),
+  };
+};
+
+export { presentPracticeTask, presentTaskParticipant };

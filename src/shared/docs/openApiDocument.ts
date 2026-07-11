@@ -40,6 +40,8 @@ import {
   practiceTaskDetailsResponseSchema,
   practiceTaskResponseSchema,
   practiceTasksListResponseSchema,
+  taskParticipantResponseSchema,
+  taskParticipantsListResponseSchema,
   practiceReviewDetailsResponseSchema,
   practiceReviewResponseSchema,
   publicCohortDetailsResponseSchema,
@@ -85,6 +87,8 @@ const createOpenApiRegistry = () => {
   registry.register('PracticeTask', practiceTaskResponseSchema);
   registry.register('PracticeTaskDetailsResponse', practiceTaskDetailsResponseSchema);
   registry.register('PracticeTasksListResponse', practiceTasksListResponseSchema);
+  registry.register('TaskParticipant', taskParticipantResponseSchema);
+  registry.register('TaskParticipantsListResponse', taskParticipantsListResponseSchema);
   registry.register('PracticeReview', practiceReviewResponseSchema);
   registry.register('PracticeReviewDetailsResponse', practiceReviewDetailsResponseSchema);
   registry.register('PublicCohortDetailsResponse', publicCohortDetailsResponseSchema);

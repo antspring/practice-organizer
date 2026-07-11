@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 
 import { asyncHandler } from '../../shared/http/middlewares/asyncHandler';
-import { presentPracticeTask } from './tasks.presenter';
+import { presentPracticeTask, presentTaskParticipant } from './tasks.presenter';
 import {
   createTaskBodySchema,
   taskCohortParamsSchema,
@@ -9,7 +9,13 @@ import {
   taskWeekQuerySchema,
   updateTaskBodySchema,
 } from './tasks.schemas';
-import { createMyTask, deleteMyTask, listMyTasksByWeek, updateMyTask } from './tasks.service';
+import {
+  createMyTask,
+  deleteMyTask,
+  listCohortTasksByWeek,
+  listMyTasksByWeek,
+  updateMyTask,
+} from './tasks.service';
 
 const listMyPracticeTasks: RequestHandler = asyncHandler(async (request, response) => {
   const { cohortId } = taskCohortParamsSchema.parse(request.params);
@@ -27,6 +33,14 @@ const createMyPracticeTask: RequestHandler = asyncHandler(async (request, respon
   response.status(201).json({ task: presentPracticeTask(task) });
 });
 
+const listCohortPracticeTasks: RequestHandler = asyncHandler(async (request, response) => {
+  const { cohortId } = taskCohortParamsSchema.parse(request.params);
+  const { weekStart } = taskWeekQuerySchema.parse(request.query);
+  const participants = await listCohortTasksByWeek(response.locals.user, cohortId, weekStart);
+
+  response.status(200).json({ items: participants.map(presentTaskParticipant) });
+});
+
 const updateMyPracticeTask: RequestHandler = asyncHandler(async (request, response) => {
   const { taskId } = taskIdParamsSchema.parse(request.params);
   const input = updateTaskBodySchema.parse(request.body);
@@ -42,4 +56,10 @@ const deleteMyPracticeTask: RequestHandler = asyncHandler(async (request, respon
   response.status(204).send();
 });
 
-export { createMyPracticeTask, deleteMyPracticeTask, listMyPracticeTasks, updateMyPracticeTask };
+export {
+  createMyPracticeTask,
+  deleteMyPracticeTask,
+  listCohortPracticeTasks,
+  listMyPracticeTasks,
+  updateMyPracticeTask,
+};

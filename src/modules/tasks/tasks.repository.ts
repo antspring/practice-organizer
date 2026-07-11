@@ -59,6 +59,50 @@ const listPracticeTasksByWeek = (userId: string, cohortId: string, startsAt: Dat
   });
 };
 
+const listTaskParticipantsByWeek = (cohortId: string, startsAt: Date, endsAt: Date) => {
+  return prismaClient.practiceApplication.findMany({
+    where: {
+      cohortId,
+      status: 'approved',
+    },
+    select: {
+      userId: true,
+      track: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+      user: {
+        select: {
+          practiceProfile: {
+            select: {
+              fullName: true,
+            },
+          },
+          practiceTasks: {
+            where: {
+              cohortId,
+              date: {
+                gte: startsAt,
+                lte: endsAt,
+              },
+            },
+            orderBy: { date: 'asc' },
+          },
+        },
+      },
+    },
+    orderBy: {
+      user: {
+        practiceProfile: {
+          fullName: 'asc',
+        },
+      },
+    },
+  });
+};
+
 const createPracticeTask = (data: CreateTaskData) => {
   return prismaClient.practiceTask.create({ data });
 };
@@ -82,5 +126,6 @@ export {
   findPracticeTaskById,
   findTaskCohortById,
   listPracticeTasksByWeek,
+  listTaskParticipantsByWeek,
   updatePracticeTask,
 };

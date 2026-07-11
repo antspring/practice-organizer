@@ -4,6 +4,7 @@ import {
   errorResponseSchema,
   practiceTaskDetailsResponseSchema,
   practiceTasksListResponseSchema,
+  taskParticipantsListResponseSchema,
 } from '../../shared/docs/apiSchemas';
 import {
   createTaskBodySchema,
@@ -20,6 +21,25 @@ const commonErrorContent = {
 };
 
 const registerTasksDocs = (registry: OpenAPIRegistry) => {
+  registry.registerPath({
+    method: 'get',
+    path: '/tasks/cohorts/{cohortId}/week',
+    tags: ['Tasks'],
+    summary: 'List cohort participants and tasks for a work week',
+    security: [{ bearerAuth: [] }],
+    request: { params: taskCohortParamsSchema, query: taskWeekQuerySchema },
+    responses: {
+      200: {
+        description: 'Cohort task board',
+        content: { 'application/json': { schema: taskParticipantsListResponseSchema } },
+      },
+      400: { description: 'Invalid week start', content: commonErrorContent },
+      401: { description: 'Missing or invalid access token', content: commonErrorContent },
+      403: { description: 'Approved application is required for students', content: commonErrorContent },
+      404: { description: 'Cohort not found', content: commonErrorContent },
+    },
+  });
+
   registry.registerPath({
     method: 'get',
     path: '/tasks/cohorts/{cohortId}/me',
