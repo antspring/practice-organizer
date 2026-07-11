@@ -1,7 +1,11 @@
 import { PracticeApplicationStatus, UserRole } from '../../generated/prisma/enums';
 import { AppError } from '../../shared/http/errors/AppError';
 import { fileStorage } from '../../shared/storage';
-import { findReportApplicationById, upsertPracticeReport } from './reports.repository';
+import {
+  findReportApplicationById,
+  updatePracticeReportApproval,
+  upsertPracticeReport,
+} from './reports.repository';
 
 type ReportUser = {
   id: string;
@@ -98,4 +102,18 @@ const downloadReport = async (applicationId: string, user: ReportUser) => {
   };
 };
 
-export { downloadReport, getReport, uploadReport };
+const setReportApproval = async (applicationId: string, user: ReportUser, isApproved: boolean) => {
+  if (user.role !== UserRole.admin) {
+    throw new AppError('Forbidden', 403);
+  }
+
+  const application = await getReportApplication(applicationId);
+
+  if (!application.report) {
+    throw new AppError('Practice report not found', 404);
+  }
+
+  return updatePracticeReportApproval(applicationId, isApproved);
+};
+
+export { downloadReport, getReport, setReportApproval, uploadReport };

@@ -4,4 +4,8 @@ const reportApplicationParamsSchema = z.object({
   applicationId: z.string().uuid(),
 });
 
-export { reportApplicationParamsSchema };
+const updateReportApprovalBodySchema = z.object({
+  isApproved: z.boolean(),
+});
+
+export { reportApplicationParamsSchema, updateReportApprovalBodySchema };

@@ -2,8 +2,8 @@ import { RequestHandler } from 'express';
 
 import { asyncHandler } from '../../shared/http/middlewares/asyncHandler';
 import { presentPracticeReport } from './reports.presenter';
-import { reportApplicationParamsSchema } from './reports.schemas';
-import { downloadReport, getReport, uploadReport } from './reports.service';
+import { reportApplicationParamsSchema, updateReportApprovalBodySchema } from './reports.schemas';
+import { downloadReport, getReport, setReportApproval, uploadReport } from './reports.service';
 
 const uploadPracticeReport: RequestHandler = asyncHandler(async (request, response) => {
   const { applicationId } = reportApplicationParamsSchema.parse(request.params);
@@ -29,4 +29,12 @@ const downloadPracticeReport: RequestHandler = asyncHandler(async (request, resp
   response.status(200).send(buffer);
 });
 
-export { downloadPracticeReport, getPracticeReport, uploadPracticeReport };
+const updatePracticeReportApproval: RequestHandler = asyncHandler(async (request, response) => {
+  const { applicationId } = reportApplicationParamsSchema.parse(request.params);
+  const { isApproved } = updateReportApprovalBodySchema.parse(request.body);
+  const report = await setReportApproval(applicationId, response.locals.user, isApproved);
+
+  response.status(200).json({ report: presentPracticeReport(report) });
+});
+
+export { downloadPracticeReport, getPracticeReport, updatePracticeReportApproval, uploadPracticeReport };

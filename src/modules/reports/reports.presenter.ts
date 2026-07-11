@@ -4,6 +4,7 @@ type PracticeReportView = {
   originalName: string;
   mimeType: string;
   size: number;
+  isApproved: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -19,6 +20,7 @@ const presentPracticeReport = (report: PracticeReportView | null) => {
     originalName: report.originalName,
     mimeType: report.mimeType,
     size: report.size,
+    isApproved: report.isApproved,
     createdAt: report.createdAt,
     updatedAt: report.updatedAt,
   };

@@ -1,7 +1,7 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
 import { errorResponseSchema, practiceReportDetailsResponseSchema } from '../../shared/docs/apiSchemas';
-import { reportApplicationParamsSchema } from './reports.schemas';
+import { reportApplicationParamsSchema, updateReportApprovalBodySchema } from './reports.schemas';
 
 const registerReportsDocs = (registry: OpenAPIRegistry) => {
   registry.registerPath({
@@ -93,6 +93,46 @@ const registerReportsDocs = (registry: OpenAPIRegistry) => {
             schema: { type: 'string', format: 'binary' },
           },
         },
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: { 'application/json': { schema: errorResponseSchema } },
+      },
+      403: {
+        description: 'Forbidden',
+        content: { 'application/json': { schema: errorResponseSchema } },
+      },
+      404: {
+        description: 'Application or report not found',
+        content: { 'application/json': { schema: errorResponseSchema } },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'patch',
+    path: '/reports/applications/{applicationId}/approval',
+    tags: ['Reports'],
+    summary: 'Approve or revoke a practice report',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: reportApplicationParamsSchema,
+      body: {
+        content: {
+          'application/json': {
+            schema: updateReportApprovalBodySchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Updated report metadata',
+        content: { 'application/json': { schema: practiceReportDetailsResponseSchema } },
+      },
+      400: {
+        description: 'Invalid request body',
+        content: { 'application/json': { schema: errorResponseSchema } },
       },
       401: {
         description: 'Missing or invalid access token',

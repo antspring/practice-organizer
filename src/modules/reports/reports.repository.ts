@@ -26,8 +26,18 @@ const upsertPracticeReport = (data: UpsertPracticeReportData) => {
   return prismaClient.practiceReport.upsert({
     where: { applicationId },
     create: data,
-    update: reportData,
+    update: {
+      ...reportData,
+      isApproved: false,
+    },
   });
 };
 
-export { findReportApplicationById, upsertPracticeReport };
+const updatePracticeReportApproval = (applicationId: string, isApproved: boolean) => {
+  return prismaClient.practiceReport.update({
+    where: { applicationId },
+    data: { isApproved },
+  });
+};
+
+export { findReportApplicationById, updatePracticeReportApproval, upsertPracticeReport };

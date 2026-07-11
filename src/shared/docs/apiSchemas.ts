@@ -47,6 +47,7 @@ const practiceReportResponseSchema = z.object({
   originalName: z.string(),
   mimeType: z.string(),
   size: z.number().int(),
+  isApproved: z.boolean(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
