@@ -6,3 +6,4 @@ src/generated
 .env
 .DS_Store
 npm-debug.log*
+uploads
