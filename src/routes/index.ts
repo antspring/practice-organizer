@@ -10,6 +10,7 @@ import { profilesRouter } from '../modules/profiles/profiles.routes';
 import { reviewsRouter } from '../modules/reviews/reviews.routes';
 import { reportsRouter } from '../modules/reports/reports.routes';
 import { tracksRouter } from '../modules/tracks/tracks.routes';
+import { tasksRouter } from '../modules/tasks/tasks.routes';
 import { usersRouter } from '../modules/users/users.routes';
 
 const router = Router();
@@ -24,6 +25,7 @@ router.use('/profiles', profilesRouter);
 router.use('/reviews', reviewsRouter);
 router.use('/reports', reportsRouter);
 router.use('/tracks', tracksRouter);
+router.use('/tasks', tasksRouter);
 router.use('/users', usersRouter);
 
 export { router };
