@@ -32,6 +32,18 @@ const ensureRequiredValue = (value: string | null | undefined, message: string) 
   return value;
 };
 
+const formatShortName = (fullName: string) => {
+  const [lastName, ...givenNames] = fullName.trim().split(/\s+/);
+
+  if (!lastName || givenNames.length === 0) {
+    return fullName.trim();
+  }
+
+  const initials = givenNames.map((name) => `${name[0].toUpperCase()}.`).join(' ');
+
+  return `${lastName} ${initials}`;
+};
+
 const formatRequiredBoolean = (value: boolean | null | undefined, message: string) => {
   if (value === null || value === undefined) {
     throw new AppError(message, 400);
@@ -137,4 +149,49 @@ const generateSupervisorReviewDocument = async (applicationId: string, user: Gen
   };
 };
 
-export { generateIndividualAssignmentDocument, generateSupervisorReviewDocument };
+const generateReportTitlePageDocument = async (applicationId: string, user: GenerateDocumentUser) => {
+  const application = await findApplicationForDocumentById(applicationId);
+
+  if (!application) {
+    throw new AppError('Application not found', 404);
+  }
+
+  ensureCanReadApplicationDocument(user, application.userId);
+  ensureApplicationIsApproved(application.status);
+
+  const profile = application.user.practiceProfile;
+
+  if (!profile) {
+    throw new AppError('Practice profile is required', 400);
+  }
+
+  if (!application.report) {
+    throw new AppError('Practice report is required', 400);
+  }
+
+  if (!application.report.isApproved) {
+    throw new AppError('Practice report must be approved', 400);
+  }
+
+  const buffer = await renderDocxTemplate({
+    templatePath: resolveTemplatePath('report-title-page.docx'),
+    data: {
+      grade: ensureRequiredValue(application.review?.grade, 'Practice review grade is required'),
+      track_title: ensureRequiredValue(application.track?.title, 'Application track is required'),
+      student_short_name: formatShortName(ensureRequiredValue(profile.fullName, 'Profile fullName is required')),
+      student_specialty: ensureRequiredValue(profile.specialty, 'Profile specialty is required'),
+      student_group: ensureRequiredValue(profile.group, 'Profile group is required'),
+    },
+  });
+
+  return {
+    buffer,
+    fileName: `report-title-page-${application.id}.docx`,
+  };
+};
+
+export {
+  generateIndividualAssignmentDocument,
+  generateReportTitlePageDocument,
+  generateSupervisorReviewDocument,
+};
