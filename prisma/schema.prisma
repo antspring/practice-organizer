@@ -34,6 +34,7 @@ model User {
   refreshTokens        RefreshToken[]
   practiceApplications PracticeApplication[]
   practiceProfile      PracticeProfile?
+  practiceTasks        PracticeTask[]
 
   @@map("users")
 }
@@ -83,6 +84,7 @@ model Cohort {
   practiceApplications PracticeApplication[]
   assignment           CohortAssignment?
   tracks               CohortTrack[]
+  practiceTasks        PracticeTask[]
 
   @@map("cohorts")
 }
@@ -234,4 +236,24 @@ model PracticeReview {
   application PracticeApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@map("practice_reviews")
+}
+
+model PracticeTask {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  cohortId     String   @map("cohort_id")
+  date         DateTime @db.Date
+  title        String
+  description  String
+  artifactLink String?  @map("artifact_link")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cohort Cohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, cohortId, date])
+  @@index([cohortId, date])
+  @@index([userId, date])
+  @@map("practice_tasks")
 }
