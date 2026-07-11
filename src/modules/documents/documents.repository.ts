@@ -13,6 +13,7 @@ const findApplicationForDocumentById = (id: string) => {
         },
       },
       review: true,
+      report: true,
     },
   });
 };

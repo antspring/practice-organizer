@@ -5,6 +5,7 @@
 /src/generated/prisma
 .DS_Store
 .env
+/uploads
 
 /node_modules
 npm-debug.log*

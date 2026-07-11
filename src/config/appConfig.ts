@@ -8,6 +8,8 @@ const MAX_PORT = 65535;
 const DEFAULT_REFRESH_TOKEN_EXPIRES_IN_DAYS = 30;
 const DEFAULT_NODE_ENV = 'development';
 const DEFAULT_MAIL_FROM = 'Practice Organizer <no-reply@example.com>';
+const DEFAULT_FILE_STORAGE_DRIVER = 'local';
+const DEFAULT_LOCAL_STORAGE_ROOT = 'uploads';
 
 const parsePort = (value: string | undefined) => {
   if (!value) {
@@ -70,6 +72,10 @@ export const appConfig = {
     DEFAULT_REFRESH_TOKEN_EXPIRES_IN_DAYS,
     'REFRESH_TOKEN_EXPIRES_IN_DAYS',
   ),
+  fileStorage: {
+    driver: process.env.FILE_STORAGE_DRIVER || DEFAULT_FILE_STORAGE_DRIVER,
+    localRoot: process.env.LOCAL_STORAGE_ROOT || DEFAULT_LOCAL_STORAGE_ROOT,
+  },
   mail: {
     enabled: parseBoolean(process.env.MAIL_ENABLED),
     from: process.env.MAIL_FROM || DEFAULT_MAIL_FROM,

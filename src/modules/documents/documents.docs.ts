@@ -110,6 +110,55 @@ const registerDocumentsDocs = (registry: OpenAPIRegistry) => {
       },
     },
   });
+
+  registry.registerPath({
+    method: 'get',
+    path: '/documents/applications/{applicationId}/report-title-page',
+    tags: ['Documents'],
+    summary: 'Download report title page document',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: documentApplicationParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Report title page docx',
+        content: docxResponseContent,
+      },
+      400: {
+        description: 'Application, report, or review is not ready for document generation',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      403: {
+        description: 'Forbidden',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Application not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+    },
+  });
 };
 
 export { registerDocumentsDocs };

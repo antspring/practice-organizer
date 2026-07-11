@@ -171,12 +171,29 @@ model PracticeApplication {
   track   CohortTrack?                @relation(fields: [trackId], references: [id], onDelete: SetNull)
   answers PracticeApplicationAnswer[]
   review  PracticeReview?
+  report  PracticeReport?
 
   @@unique([userId, cohortId])
   @@index([cohortId])
   @@index([trackId])
   @@index([userId])
   @@map("practice_applications")
+}
+
+model PracticeReport {
+  id            String   @id @default(uuid())
+  applicationId String   @unique @map("application_id")
+  storageKey    String   @unique @map("storage_key")
+  originalName  String   @map("original_name")
+  mimeType      String   @map("mime_type")
+  size          Int
+  isApproved    Boolean  @default(false) @map("is_approved")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  application PracticeApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("practice_reports")
 }
 
 model PracticeApplicationAnswer {

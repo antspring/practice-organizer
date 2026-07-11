@@ -21,8 +21,12 @@ services:
       SMTP_SECURE: ${SMTP_SECURE}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
+      FILE_STORAGE_DRIVER: ${FILE_STORAGE_DRIVER:-local}
+      LOCAL_STORAGE_ROOT: /app/uploads
     ports:
       - "${PORT}:${PORT}"
+    volumes:
+      - report_uploads:/app/uploads
 
   postgres:
     image: postgres:18-alpine
@@ -38,3 +42,4 @@ services:
 
 volumes:
   postgres_data:
+  report_uploads:
