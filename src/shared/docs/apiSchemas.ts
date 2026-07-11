@@ -41,6 +41,16 @@ const practiceReviewResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const practiceReportResponseSchema = z.object({
+  id: z.string().uuid(),
+  applicationId: z.string().uuid(),
+  originalName: z.string(),
+  mimeType: z.string(),
+  size: z.number().int(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const cohortResponseSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -123,6 +133,10 @@ const practiceProfileDetailsResponseSchema = z.object({
 
 const practiceReviewDetailsResponseSchema = z.object({
   review: practiceReviewResponseSchema.nullable(),
+});
+
+const practiceReportDetailsResponseSchema = z.object({
+  report: practiceReportResponseSchema.nullable(),
 });
 
 const cohortDetailsResponseSchema = z.object({
@@ -234,6 +248,8 @@ export {
   practiceApplicationsListResponseSchema,
   practiceProfileDetailsResponseSchema,
   practiceProfileResponseSchema,
+  practiceReportDetailsResponseSchema,
+  practiceReportResponseSchema,
   practiceReviewDetailsResponseSchema,
   practiceReviewResponseSchema,
   publicCohortDetailsResponseSchema,
