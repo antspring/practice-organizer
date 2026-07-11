@@ -52,6 +52,18 @@ const practiceReportResponseSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+const practiceTaskResponseSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  cohortId: z.string().uuid(),
+  date: z.iso.date(),
+  title: z.string(),
+  description: z.string(),
+  artifactLink: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const cohortResponseSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -138,6 +150,30 @@ const practiceReviewDetailsResponseSchema = z.object({
 
 const practiceReportDetailsResponseSchema = z.object({
   report: practiceReportResponseSchema.nullable(),
+});
+
+const practiceTaskDetailsResponseSchema = z.object({
+  task: practiceTaskResponseSchema,
+});
+
+const practiceTasksListResponseSchema = z.object({
+  items: z.array(practiceTaskResponseSchema),
+});
+
+const taskParticipantResponseSchema = z.object({
+  userId: z.string().uuid(),
+  fullName: z.string().nullable(),
+  track: z
+    .object({
+      id: z.string().uuid(),
+      title: z.string(),
+    })
+    .nullable(),
+  tasks: z.array(practiceTaskResponseSchema),
+});
+
+const taskParticipantsListResponseSchema = z.object({
+  items: z.array(taskParticipantResponseSchema),
 });
 
 const cohortDetailsResponseSchema = z.object({
@@ -251,6 +287,11 @@ export {
   practiceProfileResponseSchema,
   practiceReportDetailsResponseSchema,
   practiceReportResponseSchema,
+  practiceTaskDetailsResponseSchema,
+  practiceTaskResponseSchema,
+  practiceTasksListResponseSchema,
+  taskParticipantResponseSchema,
+  taskParticipantsListResponseSchema,
   practiceReviewDetailsResponseSchema,
   practiceReviewResponseSchema,
   publicCohortDetailsResponseSchema,

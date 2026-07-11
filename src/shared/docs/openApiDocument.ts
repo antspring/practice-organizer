@@ -11,6 +11,7 @@ import { registerProfilesDocs } from '../../modules/profiles/profiles.docs';
 import { registerReviewsDocs } from '../../modules/reviews/reviews.docs';
 import { registerReportsDocs } from '../../modules/reports/reports.docs';
 import { registerTracksDocs } from '../../modules/tracks/tracks.docs';
+import { registerTasksDocs } from '../../modules/tasks/tasks.docs';
 import { registerUsersDocs } from '../../modules/users/users.docs';
 import {
   applicationAutofillAnswerResponseSchema,
@@ -36,6 +37,11 @@ import {
   practiceProfileResponseSchema,
   practiceReportDetailsResponseSchema,
   practiceReportResponseSchema,
+  practiceTaskDetailsResponseSchema,
+  practiceTaskResponseSchema,
+  practiceTasksListResponseSchema,
+  taskParticipantResponseSchema,
+  taskParticipantsListResponseSchema,
   practiceReviewDetailsResponseSchema,
   practiceReviewResponseSchema,
   publicCohortDetailsResponseSchema,
@@ -78,6 +84,11 @@ const createOpenApiRegistry = () => {
   registry.register('PracticeProfileDetailsResponse', practiceProfileDetailsResponseSchema);
   registry.register('PracticeReport', practiceReportResponseSchema);
   registry.register('PracticeReportDetailsResponse', practiceReportDetailsResponseSchema);
+  registry.register('PracticeTask', practiceTaskResponseSchema);
+  registry.register('PracticeTaskDetailsResponse', practiceTaskDetailsResponseSchema);
+  registry.register('PracticeTasksListResponse', practiceTasksListResponseSchema);
+  registry.register('TaskParticipant', taskParticipantResponseSchema);
+  registry.register('TaskParticipantsListResponse', taskParticipantsListResponseSchema);
   registry.register('PracticeReview', practiceReviewResponseSchema);
   registry.register('PracticeReviewDetailsResponse', practiceReviewDetailsResponseSchema);
   registry.register('PublicCohortDetailsResponse', publicCohortDetailsResponseSchema);
@@ -93,6 +104,7 @@ const createOpenApiRegistry = () => {
   registerReviewsDocs(registry);
   registerReportsDocs(registry);
   registerTracksDocs(registry);
+  registerTasksDocs(registry);
   registerUsersDocs(registry);
 
   return registry;
