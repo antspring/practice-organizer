@@ -237,6 +237,7 @@ const practiceApplicationResponseSchema = z.object({
     PracticeApplicationStatus.approved,
     PracticeApplicationStatus.rejected,
   ]),
+  rejectionComment: z.string().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   cohort: cohortResponseSchema,

@@ -160,13 +160,14 @@ model CohortFormFieldOption {
 }
 
 model PracticeApplication {
-  id        String                    @id @default(uuid())
-  userId    String                    @map("user_id")
-  cohortId  String                    @map("cohort_id")
-  trackId   String?                   @map("track_id")
-  status    PracticeApplicationStatus @default(pending)
-  createdAt DateTime                  @default(now()) @map("created_at")
-  updatedAt DateTime                  @updatedAt @map("updated_at")
+  id               String                    @id @default(uuid())
+  userId           String                    @map("user_id")
+  cohortId         String                    @map("cohort_id")
+  trackId          String?                   @map("track_id")
+  status           PracticeApplicationStatus @default(pending)
+  rejectionComment String?                   @map("rejection_comment")
+  createdAt        DateTime                  @default(now()) @map("created_at")
+  updatedAt        DateTime                  @updatedAt @map("updated_at")
 
   user    User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   cohort  Cohort                      @relation(fields: [cohortId], references: [id], onDelete: Cascade)

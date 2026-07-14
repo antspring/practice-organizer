@@ -52,22 +52,41 @@ const updateApplicationSchema = z
   })
   .superRefine(validateAnswerFieldIdsAreUnique);
 
-const updateApplicationStatusSchema = z.object({
-  status: z.enum([
-    PracticeApplicationStatus.pending,
-    PracticeApplicationStatus.approved,
-    PracticeApplicationStatus.rejected,
-  ]),
-  trackId: z.string().uuid().nullable().optional(),
-}).superRefine((data, context) => {
-  if (data.status === PracticeApplicationStatus.approved && !data.trackId) {
-    context.addIssue({
-      code: 'custom',
-      message: 'trackId is required when application is approved',
-      path: ['trackId'],
-    });
-  }
-});
+const updateApplicationStatusSchema = z
+  .object({
+    status: z.enum([
+      PracticeApplicationStatus.pending,
+      PracticeApplicationStatus.approved,
+      PracticeApplicationStatus.rejected,
+    ]),
+    trackId: z.string().uuid().nullable().optional(),
+    rejectionComment: z.string().trim().min(1).max(2000).nullable().optional(),
+  })
+  .superRefine((data, context) => {
+    if (data.status === PracticeApplicationStatus.approved && !data.trackId) {
+      context.addIssue({
+        code: 'custom',
+        message: 'trackId is required when application is approved',
+        path: ['trackId'],
+      });
+    }
+
+    if (data.status === PracticeApplicationStatus.rejected && !data.rejectionComment) {
+      context.addIssue({
+        code: 'custom',
+        message: 'rejectionComment is required when application is rejected',
+        path: ['rejectionComment'],
+      });
+    }
+
+    if (data.status !== PracticeApplicationStatus.rejected && data.rejectionComment) {
+      context.addIssue({
+        code: 'custom',
+        message: 'rejectionComment is only allowed when application is rejected',
+        path: ['rejectionComment'],
+      });
+    }
+  });
 
 export {
   applicationAutofillParamsSchema,

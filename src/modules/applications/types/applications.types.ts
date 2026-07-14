@@ -25,6 +25,7 @@ type AutofillAnswer = {
 type UpdateApplicationStatusInput = {
   status: PracticeApplicationStatus;
   trackId?: string | null;
+  rejectionComment?: string | null;
 };
 
 export type {
