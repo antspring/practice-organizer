@@ -136,10 +136,15 @@ const listApplicationUsersByCohort = (cohortId: string) => {
   });
 };
 
-const updateApplicationStatus = (id: string, status: PracticeApplicationStatus, trackId?: string | null) => {
+const updateApplicationStatus = (
+  id: string,
+  status: PracticeApplicationStatus,
+  trackId?: string | null,
+  rejectionComment?: string | null,
+) => {
   return prismaClient.practiceApplication.update({
     where: { id },
-    data: { status, trackId },
+    data: { status, trackId, rejectionComment },
     include: applicationDetailsInclude,
   });
 };

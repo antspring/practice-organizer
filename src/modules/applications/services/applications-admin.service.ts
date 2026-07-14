@@ -1,3 +1,4 @@
+import { PracticeApplicationStatus } from '../../../generated/prisma/enums';
 import { AppError } from '../../../shared/http/errors/AppError';
 import { findCohortById } from '../../cohorts/cohorts.repository';
 import { findTrackById } from '../../tracks/tracks.repository';
@@ -35,7 +36,14 @@ const updateApplicationStatusForAdmin = async (applicationId: string, input: Upd
     }
   }
 
-  const updatedApplication = await updateApplicationStatus(applicationId, input.status, input.trackId);
+  const rejectionComment =
+    input.status === PracticeApplicationStatus.rejected ? input.rejectionComment : null;
+  const updatedApplication = await updateApplicationStatus(
+    applicationId,
+    input.status,
+    input.trackId,
+    rejectionComment,
+  );
 
   return { application: updatedApplication };
 };
