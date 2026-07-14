@@ -42,6 +42,10 @@ const addUtcDays = (date: Date, days: number) => {
   return result;
 };
 
+const getUtcCalendarTimestamp = (date: Date) => {
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+};
+
 const ensureApprovedApplication = async (userId: string, cohortId: string) => {
   const application = await findApprovedTaskApplication(userId, cohortId);
 
@@ -67,7 +71,11 @@ const ensureTaskDateIsAllowed = (date: Date, cohortStartsAt: Date, cohortEndsAt:
     throw new AppError('Task date must be a weekday', 400);
   }
 
-  if (date < cohortStartsAt || date > cohortEndsAt) {
+  const taskDate = getUtcCalendarTimestamp(date);
+  const practiceStartsAt = getUtcCalendarTimestamp(cohortStartsAt);
+  const practiceEndsAt = getUtcCalendarTimestamp(cohortEndsAt);
+
+  if (taskDate < practiceStartsAt || taskDate > practiceEndsAt) {
     throw new AppError('Task date must be within practice period', 400);
   }
 };
