@@ -20,6 +20,8 @@ import {
   cohortAssignmentDetailsResponseSchema,
   cohortAssignmentResponseSchema,
   cohortDetailsResponseSchema,
+  cohortDocumentSummaryItemResponseSchema,
+  cohortDocumentSummaryResponseSchema,
   cohortFormFieldOptionResponseSchema,
   cohortFormFieldResponseSchema,
   cohortFormResponseSchema,
@@ -73,6 +75,8 @@ const createOpenApiRegistry = () => {
   registry.register('PublicCohort', publicCohortResponseSchema);
   registry.register('AuthResponse', authResponseSchema);
   registry.register('CohortDetailsResponse', cohortDetailsResponseSchema);
+  registry.register('CohortDocumentSummaryItem', cohortDocumentSummaryItemResponseSchema);
+  registry.register('CohortDocumentSummaryResponse', cohortDocumentSummaryResponseSchema);
   registry.register('CohortFormResponse', cohortFormResponseSchema);
   registry.register('CohortsListResponse', cohortsListResponseSchema);
   registry.register('ErrorResponse', errorResponseSchema);

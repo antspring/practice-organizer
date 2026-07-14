@@ -1,7 +1,9 @@
 import { Router } from 'express';
 
-import { authenticate } from '../auth/auth.middleware';
+import { UserRole } from '../../generated/prisma/enums';
+import { authenticate, authorize } from '../auth/auth.middleware';
 import {
+  getCohortDocumentsSummary,
   getIndividualAssignmentDocument,
   getReportTitlePageDocument,
   getSupervisorReviewDocument,
@@ -10,6 +12,7 @@ import {
 const documentsRouter = Router();
 
 documentsRouter.use(authenticate);
+documentsRouter.get('/cohorts/:cohortId/summary', authorize(UserRole.admin), getCohortDocumentsSummary);
 documentsRouter.get('/applications/:applicationId/individual-assignment', getIndividualAssignmentDocument);
 documentsRouter.get('/applications/:applicationId/supervisor-review', getSupervisorReviewDocument);
 documentsRouter.get('/applications/:applicationId/report-title-page', getReportTitlePageDocument);

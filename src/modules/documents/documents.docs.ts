@@ -1,7 +1,7 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
-import { errorResponseSchema } from '../../shared/docs/apiSchemas';
-import { documentApplicationParamsSchema } from './documents.schemas';
+import { cohortDocumentSummaryResponseSchema, errorResponseSchema } from '../../shared/docs/apiSchemas';
+import { documentApplicationParamsSchema, documentCohortParamsSchema } from './documents.schemas';
 
 const docxResponseContent = {
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
@@ -13,6 +13,51 @@ const docxResponseContent = {
 } as const;
 
 const registerDocumentsDocs = (registry: OpenAPIRegistry) => {
+  registry.registerPath({
+    method: 'get',
+    path: '/documents/cohorts/{cohortId}/summary',
+    tags: ['Documents'],
+    summary: 'Get cohort document readiness summary',
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: documentCohortParamsSchema,
+    },
+    responses: {
+      200: {
+        description: 'Approved cohort applications and document readiness',
+        content: {
+          'application/json': {
+            schema: cohortDocumentSummaryResponseSchema,
+          },
+        },
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      403: {
+        description: 'Forbidden',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+      404: {
+        description: 'Cohort not found',
+        content: {
+          'application/json': {
+            schema: errorResponseSchema,
+          },
+        },
+      },
+    },
+  });
+
   registry.registerPath({
     method: 'get',
     path: '/documents/applications/{applicationId}/individual-assignment',

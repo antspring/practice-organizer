@@ -1,3 +1,4 @@
+import { PracticeApplicationStatus } from '../../generated/prisma/enums';
 import { prismaClient } from '../../shared/database/prismaClient';
 
 const findApplicationForDocumentById = (id: string) => {
@@ -18,4 +19,40 @@ const findApplicationForDocumentById = (id: string) => {
   });
 };
 
-export { findApplicationForDocumentById };
+const listApprovedApplicationsForDocumentSummary = (cohortId: string) => {
+  return prismaClient.practiceApplication.findMany({
+    where: {
+      cohortId,
+      status: PracticeApplicationStatus.approved,
+    },
+    select: {
+      id: true,
+      userId: true,
+      track: {
+        select: {
+          title: true,
+        },
+      },
+      user: {
+        select: {
+          practiceProfile: true,
+        },
+      },
+      review: true,
+      report: {
+        select: {
+          isApproved: true,
+        },
+      },
+    },
+    orderBy: {
+      user: {
+        practiceProfile: {
+          fullName: 'asc',
+        },
+      },
+    },
+  });
+};
+
+export { findApplicationForDocumentById, listApprovedApplicationsForDocumentSummary };

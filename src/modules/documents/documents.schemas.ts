@@ -4,4 +4,8 @@ const documentApplicationParamsSchema = z.object({
   applicationId: z.string().uuid(),
 });
 
-export { documentApplicationParamsSchema };
+const documentCohortParamsSchema = z.object({
+  cohortId: z.string().uuid(),
+});
+
+export { documentApplicationParamsSchema, documentCohortParamsSchema };

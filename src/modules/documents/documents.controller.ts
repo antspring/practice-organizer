@@ -1,12 +1,20 @@
 import { RequestHandler } from 'express';
 
 import { asyncHandler } from '../../shared/http/middlewares/asyncHandler';
-import { documentApplicationParamsSchema } from './documents.schemas';
+import { documentApplicationParamsSchema, documentCohortParamsSchema } from './documents.schemas';
 import {
   generateIndividualAssignmentDocument,
   generateReportTitlePageDocument,
   generateSupervisorReviewDocument,
 } from './documents.service';
+import { getCohortDocumentSummary } from './services/documents-summary.service';
+
+const getCohortDocumentsSummary: RequestHandler = asyncHandler(async (request, response) => {
+  const { cohortId } = documentCohortParamsSchema.parse(request.params);
+  const result = await getCohortDocumentSummary(cohortId);
+
+  response.status(200).json(result);
+});
 
 const getIndividualAssignmentDocument: RequestHandler = asyncHandler(async (request, response) => {
   const { applicationId } = documentApplicationParamsSchema.parse(request.params);
@@ -35,4 +43,9 @@ const getReportTitlePageDocument: RequestHandler = asyncHandler(async (request, 
   response.status(200).send(result.buffer);
 });
 
-export { getIndividualAssignmentDocument, getReportTitlePageDocument, getSupervisorReviewDocument };
+export {
+  getCohortDocumentsSummary,
+  getIndividualAssignmentDocument,
+  getReportTitlePageDocument,
+  getSupervisorReviewDocument,
+};
