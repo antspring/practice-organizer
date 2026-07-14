@@ -264,6 +264,21 @@ const applicationAutofillResponseSchema = z.object({
   answers: z.array(applicationAutofillAnswerResponseSchema),
 });
 
+const cohortDocumentSummaryItemResponseSchema = z.object({
+  applicationId: z.string().uuid(),
+  userId: z.string().uuid(),
+  fullName: z.string().nullable(),
+  individualAssignmentReady: z.boolean(),
+  supervisorReviewReady: z.boolean(),
+  practiceReportUploaded: z.boolean(),
+  practiceReportApproved: z.boolean(),
+  reportTitlePageReady: z.boolean(),
+});
+
+const cohortDocumentSummaryResponseSchema = z.object({
+  items: z.array(cohortDocumentSummaryItemResponseSchema),
+});
+
 export {
   applicationAutofillAnswerResponseSchema,
   applicationAutofillResponseSchema,
@@ -271,6 +286,8 @@ export {
   cohortAssignmentDetailsResponseSchema,
   cohortAssignmentResponseSchema,
   cohortDetailsResponseSchema,
+  cohortDocumentSummaryItemResponseSchema,
+  cohortDocumentSummaryResponseSchema,
   cohortFormFieldOptionResponseSchema,
   cohortFormFieldResponseSchema,
   cohortFormResponseSchema,
