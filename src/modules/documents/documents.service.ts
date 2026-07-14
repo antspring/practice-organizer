@@ -9,7 +9,44 @@ type GenerateDocumentUser = {
 };
 
 const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('ru-RU').format(date);
+  return new Intl.DateTimeFormat('ru-RU', { timeZone: 'UTC' }).format(date);
+};
+
+const formatLongDate = (date: Date) => {
+  const formattedDate = new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+    .format(date)
+    .replace(' г.', '');
+
+  const [day, ...rest] = formattedDate.split(' ');
+
+  return `«${day}» ${rest.join(' ')}`;
+};
+
+const addUtcDays = (date: Date, days: number) => {
+  const result = new Date(date);
+  result.setUTCDate(result.getUTCDate() + days);
+  return result;
+};
+
+const getPracticeSchedule = (startsAt: Date, endsAt: Date) => {
+  const millisecondsInDay = 24 * 60 * 60 * 1000;
+  const durationInDays = Math.max(0, Math.round((endsAt.getTime() - startsAt.getTime()) / millisecondsInDay));
+  const organizationalEndOffset = Math.min(7, Math.floor(durationInDays / 3));
+  const finalStartOffset = Math.max(organizationalEndOffset, durationInDays - 3);
+
+  return {
+    organizationalStart: startsAt,
+    organizationalEnd: addUtcDays(startsAt, organizationalEndOffset),
+    mainStart: addUtcDays(startsAt, organizationalEndOffset),
+    mainEnd: addUtcDays(startsAt, Math.max(organizationalEndOffset, finalStartOffset - 1)),
+    finalStart: addUtcDays(startsAt, finalStartOffset),
+    finalEnd: endsAt,
+  };
 };
 
 const ensureCanReadApplicationDocument = (user: GenerateDocumentUser, applicationUserId: string) => {
@@ -74,6 +111,8 @@ const generateIndividualAssignmentDocument = async (applicationId: string, user:
     throw new AppError('Practice profile is required', 400);
   }
 
+  const schedule = getPracticeSchedule(application.cohort.startsAt, application.cohort.endsAt);
+
   const buffer = await renderDocxTemplate({
     templatePath: resolveTemplatePath('individual-assignment.docx'),
     data: {
@@ -83,6 +122,13 @@ const generateIndividualAssignmentDocument = async (applicationId: string, user:
       education_program: ensureRequiredValue(profile.educationProgram, 'Profile educationProgram is required'),
       practice_start_date: formatDate(application.cohort.startsAt),
       practice_end_date: formatDate(application.cohort.endsAt),
+      practice_approval_date: formatLongDate(application.cohort.startsAt),
+      organizational_start_date: formatDate(schedule.organizationalStart),
+      organizational_end_date: formatDate(schedule.organizationalEnd),
+      main_start_date: formatDate(schedule.mainStart),
+      main_end_date: formatDate(schedule.mainEnd),
+      final_start_date: formatDate(schedule.finalStart),
+      final_end_date: formatDate(schedule.finalEnd),
       track_title: ensureRequiredValue(application.track?.title, 'Application track is required'),
     },
   });
@@ -140,6 +186,7 @@ const generateSupervisorReviewDocument = async (applicationId: string, user: Gen
       ),
       suggestions: ensureRequiredValue(review.suggestions, 'Practice review suggestions is required'),
       grade: ensureRequiredValue(review.grade, 'Practice review grade is required'),
+      review_date: formatLongDate(application.cohort.endsAt),
     },
   });
 
@@ -181,6 +228,7 @@ const generateReportTitlePageDocument = async (applicationId: string, user: Gene
       student_short_name: formatShortName(ensureRequiredValue(profile.fullName, 'Profile fullName is required')),
       student_specialty: ensureRequiredValue(profile.specialty, 'Profile specialty is required'),
       student_group: ensureRequiredValue(profile.group, 'Profile group is required'),
+      cohort_year: String(application.cohort.startsAt.getUTCFullYear()),
     },
   });
 
