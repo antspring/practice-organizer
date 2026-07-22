@@ -14,6 +14,7 @@ import {
   getCohortById,
   getCohortFormForAdmin,
   getPublicCohortBySlug,
+  listAvailableCohortsForStudent,
   listCohortsForUser,
   replaceCohortFormForAdmin,
   updateCohortForAdmin,
@@ -47,6 +48,12 @@ const listCohorts: RequestHandler = asyncHandler(async (request, response) => {
   response.status(200).json(result);
 });
 
+const listAvailableCohorts: RequestHandler = asyncHandler(async (_request, response) => {
+  const result = await listAvailableCohortsForStudent(response.locals.user.id);
+
+  response.status(200).json(result);
+});
+
 const getPublicCohort: RequestHandler = asyncHandler(async (request, response) => {
   const { publicSlug } = publicCohortParamsSchema.parse(request.params);
   const result = await getPublicCohortBySlug(publicSlug);
@@ -70,4 +77,13 @@ const replaceCohortForm: RequestHandler = asyncHandler(async (request, response)
   response.status(200).json(result);
 });
 
-export { createCohort, getCohort, getCohortForm, getPublicCohort, listCohorts, replaceCohortForm, updateCohort };
+export {
+  createCohort,
+  getCohort,
+  getCohortForm,
+  getPublicCohort,
+  listAvailableCohorts,
+  listCohorts,
+  replaceCohortForm,
+  updateCohort,
+};

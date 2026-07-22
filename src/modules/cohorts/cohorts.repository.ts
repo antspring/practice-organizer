@@ -30,6 +30,10 @@ type ListCohortsParams = {
   take: number;
 };
 
+type ListAvailableCohortsParams = {
+  userId: string;
+};
+
 type ReplaceCohortFormFieldData = {
   key: string;
   label: string;
@@ -84,6 +88,19 @@ const listCohorts = ({ skip, take }: ListCohortsParams) => {
     orderBy: { startsAt: 'desc' },
     skip,
     take,
+  });
+};
+
+const listAvailableCohorts = ({ userId }: ListAvailableCohortsParams) => {
+  return prismaClient.cohort.findMany({
+    where: {
+      isActive: true,
+      isPubliclyListed: true,
+      practiceApplications: {
+        none: { userId },
+      },
+    },
+    orderBy: { applicationStartsAt: 'desc' },
   });
 };
 
@@ -151,6 +168,7 @@ export {
   findCohortByPublicSlug,
   findPublicCohortBySlug,
   getCohortFormFields,
+  listAvailableCohorts,
   listCohorts,
   replaceCohortFormFields,
   updateCohort,
