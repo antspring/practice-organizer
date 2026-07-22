@@ -118,7 +118,7 @@ const generateIndividualAssignmentDocument = async (applicationId: string, user:
     data: {
       student_full_name: ensureRequiredValue(profile.fullName, 'Profile fullName is required'),
       student_group: ensureRequiredValue(profile.group, 'Profile group is required'),
-      student_specialty: ensureRequiredValue(profile.specialty, 'Profile specialty is required'),
+      student_specialty: ensureRequiredValue(profile.directionName, 'Profile directionName is required'),
       education_program: ensureRequiredValue(profile.educationProgram, 'Profile educationProgram is required'),
       practice_start_date: formatDate(application.cohort.startsAt),
       practice_end_date: formatDate(application.cohort.endsAt),
@@ -226,7 +226,7 @@ const generateReportTitlePageDocument = async (applicationId: string, user: Gene
       grade: ensureRequiredValue(application.review?.grade, 'Practice review grade is required'),
       track_title: ensureRequiredValue(application.track?.title, 'Application track is required'),
       student_short_name: formatShortName(ensureRequiredValue(profile.fullName, 'Profile fullName is required')),
-      student_specialty: ensureRequiredValue(profile.specialty, 'Profile specialty is required'),
+      student_specialty: ensureRequiredValue(profile.directionName, 'Profile directionName is required'),
       student_group: ensureRequiredValue(profile.group, 'Profile group is required'),
       cohort_year: String(application.cohort.startsAt.getUTCFullYear()),
     },

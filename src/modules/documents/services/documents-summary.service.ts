@@ -13,7 +13,7 @@ const isIndividualAssignmentReady = (application: SummaryApplication) => {
     profile &&
       hasValue(profile.fullName) &&
       hasValue(profile.group) &&
-      hasValue(profile.specialty) &&
+      hasValue(profile.directionName) &&
       hasValue(profile.educationProgram) &&
       hasValue(application.track?.title),
   );
@@ -45,7 +45,7 @@ const isReportTitlePageReady = (application: SummaryApplication) => {
     profile &&
       hasValue(profile.fullName) &&
       hasValue(profile.group) &&
-      hasValue(profile.specialty) &&
+      hasValue(profile.directionName) &&
       hasValue(application.track?.title) &&
       application.report?.isApproved &&
       hasValue(application.review?.grade),
