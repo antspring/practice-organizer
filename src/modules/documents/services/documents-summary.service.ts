@@ -12,9 +12,13 @@ const isIndividualAssignmentReady = (application: SummaryApplication) => {
   return Boolean(
     profile &&
       hasValue(profile.fullName) &&
+      hasValue(profile.fullNameGenitive) &&
       hasValue(profile.group) &&
+      hasValue(profile.directionCode) &&
       hasValue(profile.directionName) &&
       hasValue(profile.educationProgram) &&
+      hasValue(profile.urfuPracticeSupervisor) &&
+      hasValue(profile.mainStageWorkList) &&
       hasValue(application.track?.title),
   );
 };
@@ -45,7 +49,9 @@ const isReportTitlePageReady = (application: SummaryApplication) => {
     profile &&
       hasValue(profile.fullName) &&
       hasValue(profile.group) &&
+      hasValue(profile.directionCode) &&
       hasValue(profile.directionName) &&
+      hasValue(profile.urfuPracticeSupervisor) &&
       hasValue(application.track?.title) &&
       application.report?.isApproved &&
       hasValue(application.review?.grade),

@@ -81,6 +81,15 @@ const formatShortName = (fullName: string) => {
   return `${lastName} ${initials}`;
 };
 
+const getUrfuPracticeSupervisorTemplateData = (fullName: string | null | undefined) => {
+  const requiredFullName = ensureRequiredValue(fullName, 'Profile urfuPracticeSupervisor is required');
+
+  return {
+    urfu_practice_supervisor: requiredFullName,
+    urfu_practice_supervisor_short_name: formatShortName(requiredFullName),
+  };
+};
+
 const formatRequiredBoolean = (value: boolean | null | undefined, message: string) => {
   if (value === null || value === undefined) {
     throw new AppError(message, 400);
@@ -117,9 +126,16 @@ const generateIndividualAssignmentDocument = async (applicationId: string, user:
     templatePath: resolveTemplatePath('individual-assignment.docx'),
     data: {
       student_full_name: ensureRequiredValue(profile.fullName, 'Profile fullName is required'),
+      student_full_name_genitive: ensureRequiredValue(
+        profile.fullNameGenitive,
+        'Profile fullNameGenitive is required',
+      ),
       student_group: ensureRequiredValue(profile.group, 'Profile group is required'),
-      student_specialty: ensureRequiredValue(profile.directionName, 'Profile directionName is required'),
+      direction_code: ensureRequiredValue(profile.directionCode, 'Profile directionCode is required'),
+      direction_name: ensureRequiredValue(profile.directionName, 'Profile directionName is required'),
       education_program: ensureRequiredValue(profile.educationProgram, 'Profile educationProgram is required'),
+      ...getUrfuPracticeSupervisorTemplateData(profile.urfuPracticeSupervisor),
+      main_stage_work_list: ensureRequiredValue(profile.mainStageWorkList, 'Profile mainStageWorkList is required'),
       practice_start_date: formatDate(application.cohort.startsAt),
       practice_end_date: formatDate(application.cohort.endsAt),
       practice_approval_date: formatLongDate(application.cohort.startsAt),
@@ -226,8 +242,10 @@ const generateReportTitlePageDocument = async (applicationId: string, user: Gene
       grade: ensureRequiredValue(application.review?.grade, 'Practice review grade is required'),
       track_title: ensureRequiredValue(application.track?.title, 'Application track is required'),
       student_short_name: formatShortName(ensureRequiredValue(profile.fullName, 'Profile fullName is required')),
-      student_specialty: ensureRequiredValue(profile.directionName, 'Profile directionName is required'),
+      direction_code: ensureRequiredValue(profile.directionCode, 'Profile directionCode is required'),
+      direction_name: ensureRequiredValue(profile.directionName, 'Profile directionName is required'),
       student_group: ensureRequiredValue(profile.group, 'Profile group is required'),
+      ...getUrfuPracticeSupervisorTemplateData(profile.urfuPracticeSupervisor),
       cohort_year: String(application.cohort.startsAt.getUTCFullYear()),
     },
   });
