@@ -2,9 +2,13 @@ import { prismaClient } from '../../shared/database/prismaClient';
 
 type UpsertPracticeProfileData = {
   fullName?: string | null;
-  specialty?: string | null;
+  fullNameGenitive?: string | null;
+  directionCode?: string | null;
+  directionName?: string | null;
   educationProgram?: string | null;
   group?: string | null;
+  urfuPracticeSupervisor?: string | null;
+  mainStageWorkList?: string | null;
 };
 
 const findPracticeProfileByUserId = (userId: string) => {

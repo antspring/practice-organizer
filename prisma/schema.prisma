@@ -40,14 +40,18 @@ model User {
 }
 
 model PracticeProfile {
-  id               String   @id @default(uuid())
-  userId           String   @unique @map("user_id")
-  fullName         String?  @map("full_name")
-  specialty        String?
-  educationProgram String?  @map("education_program")
-  group            String?
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id                     String   @id @default(uuid())
+  userId                 String   @unique @map("user_id")
+  fullName               String?  @map("full_name")
+  fullNameGenitive       String?  @map("full_name_genitive")
+  directionCode          String?  @map("direction_code")
+  directionName          String?  @map("direction_name")
+  educationProgram       String?  @map("education_program")
+  group                  String?
+  urfuPracticeSupervisor String?  @map("urfu_practice_supervisor")
+  mainStageWorkList      String?  @map("main_stage_work_list")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
