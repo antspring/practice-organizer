@@ -77,6 +77,7 @@ model Cohort {
   applicationStartsAt DateTime @map("application_starts_at")
   applicationEndsAt   DateTime @map("application_ends_at")
   isActive            Boolean  @default(true) @map("is_active")
+  isPubliclyListed    Boolean  @default(false) @map("is_publicly_listed")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
