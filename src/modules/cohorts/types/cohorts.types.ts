@@ -7,6 +7,7 @@ type CreateCohortInput = {
   applicationStartsAt: string;
   applicationEndsAt: string;
   isActive?: boolean;
+  isPubliclyListed?: boolean;
 };
 
 type UpdateCohortInput = {
@@ -18,6 +19,7 @@ type UpdateCohortInput = {
   applicationStartsAt?: string;
   applicationEndsAt?: string;
   isActive?: boolean;
+  isPubliclyListed?: boolean;
 };
 
 type ListCohortsInput = {

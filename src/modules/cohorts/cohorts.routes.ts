@@ -7,6 +7,7 @@ import {
   getCohort,
   getCohortForm,
   getPublicCohort,
+  listAvailableCohorts,
   listCohorts,
   replaceCohortForm,
   updateCohort,
@@ -16,6 +17,7 @@ const cohortsRouter = Router();
 
 cohortsRouter.get('/public/:publicSlug', getPublicCohort);
 cohortsRouter.use(authenticate);
+cohortsRouter.get('/available', authorize(UserRole.student), listAvailableCohorts);
 cohortsRouter.get('/', listCohorts);
 cohortsRouter.get('/:id/form', authorize(UserRole.admin), getCohortForm);
 cohortsRouter.put('/:id/form', authorize(UserRole.admin), replaceCohortForm);

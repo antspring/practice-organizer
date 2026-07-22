@@ -74,6 +74,7 @@ const cohortResponseSchema = z.object({
   applicationStartsAt: z.string().datetime(),
   applicationEndsAt: z.string().datetime(),
   isActive: z.boolean(),
+  isPubliclyListed: z.boolean(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -217,6 +218,10 @@ const cohortsListResponseSchema = z.object({
   pagination: paginationSchema,
 });
 
+const availableCohortsListResponseSchema = z.object({
+  items: z.array(cohortResponseSchema),
+});
+
 const practiceApplicationAnswerResponseSchema = z.object({
   id: z.string().uuid(),
   applicationId: z.string().uuid(),
@@ -282,6 +287,7 @@ const cohortDocumentSummaryResponseSchema = z.object({
 export {
   applicationAutofillAnswerResponseSchema,
   applicationAutofillResponseSchema,
+  availableCohortsListResponseSchema,
   authResponseSchema,
   cohortAssignmentDetailsResponseSchema,
   cohortAssignmentResponseSchema,

@@ -5,6 +5,7 @@ import {
   findCohortById,
   findPublicCohortBySlug,
   getCohortFormFields,
+  listAvailableCohorts,
   listCohorts,
   replaceCohortFormFields,
   updateCohort,
@@ -35,6 +36,7 @@ const createCohortForAdmin = async (input: CreateCohortInput) => {
     applicationStartsAt,
     applicationEndsAt,
     isActive: input.isActive,
+    isPubliclyListed: input.isPubliclyListed,
   });
 };
 
@@ -82,6 +84,12 @@ const listCohortsForUser = async ({ page, limit }: ListCohortsInput) => {
   };
 };
 
+const listAvailableCohortsForStudent = async (userId: string) => {
+  const items = await listAvailableCohorts({ userId });
+
+  return { items };
+};
+
 const replaceCohortFormForAdmin = async (cohortId: string, input: ReplaceCohortFormInput) => {
   await getCohortById(cohortId);
   const fields = await replaceCohortFormFields(cohortId, input.fields);
@@ -118,6 +126,7 @@ const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
     applicationStartsAt: input.applicationStartsAt ? applicationStartsAt : undefined,
     applicationEndsAt: input.applicationEndsAt ? applicationEndsAt : undefined,
     isActive: input.isActive,
+    isPubliclyListed: input.isPubliclyListed,
   });
 };
 
@@ -126,6 +135,7 @@ export {
   getCohortById,
   getCohortFormForAdmin,
   getPublicCohortBySlug,
+  listAvailableCohortsForStudent,
   listCohortsForUser,
   replaceCohortFormForAdmin,
   updateCohortForAdmin,

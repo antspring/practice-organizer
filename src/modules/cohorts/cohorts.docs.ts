@@ -2,6 +2,7 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { ZodType } from 'zod';
 
 import {
+  availableCohortsListResponseSchema,
   cohortDetailsResponseSchema,
   cohortFormResponseSchema,
   cohortsListResponseSchema,
@@ -39,6 +40,28 @@ const registerCohortsDocs = (registry: OpenAPIRegistry) => {
       },
       404: {
         description: 'Cohort not found',
+        content: jsonContent(errorResponseSchema),
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: 'get',
+    path: '/cohorts/available',
+    tags: ['Cohorts'],
+    summary: 'List publicly listed cohorts for a student',
+    security: [{ bearerAuth: [] }],
+    responses: {
+      200: {
+        description: 'Publicly listed cohorts without an existing application from the current student',
+        content: jsonContent(availableCohortsListResponseSchema),
+      },
+      401: {
+        description: 'Missing or invalid access token',
+        content: jsonContent(errorResponseSchema),
+      },
+      403: {
+        description: 'Forbidden',
         content: jsonContent(errorResponseSchema),
       },
     },
