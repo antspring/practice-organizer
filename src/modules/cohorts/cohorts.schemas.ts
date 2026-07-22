@@ -120,6 +120,7 @@ const createCohortSchema = z
     applicationStartsAt: dateTimeSchema,
     applicationEndsAt: dateTimeSchema,
     isActive: z.boolean().optional(),
+    isPubliclyListed: z.boolean().optional(),
   })
   .refine(validateDateRange, {
     message: 'startsAt must be earlier than endsAt',
@@ -140,6 +141,7 @@ const updateCohortSchema = z
     applicationStartsAt: dateTimeSchema.optional(),
     applicationEndsAt: dateTimeSchema.optional(),
     isActive: z.boolean().optional(),
+    isPubliclyListed: z.boolean().optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: 'At least one field is required',

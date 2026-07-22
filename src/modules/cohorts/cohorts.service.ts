@@ -35,6 +35,7 @@ const createCohortForAdmin = async (input: CreateCohortInput) => {
     applicationStartsAt,
     applicationEndsAt,
     isActive: input.isActive,
+    isPubliclyListed: input.isPubliclyListed,
   });
 };
 
@@ -118,6 +119,7 @@ const updateCohortForAdmin = async (id: string, input: UpdateCohortInput) => {
     applicationStartsAt: input.applicationStartsAt ? applicationStartsAt : undefined,
     applicationEndsAt: input.applicationEndsAt ? applicationEndsAt : undefined,
     isActive: input.isActive,
+    isPubliclyListed: input.isPubliclyListed,
   });
 };
 

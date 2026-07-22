@@ -10,6 +10,7 @@ type CreateCohortData = {
   applicationStartsAt: Date;
   applicationEndsAt: Date;
   isActive?: boolean;
+  isPubliclyListed?: boolean;
 };
 
 type UpdateCohortData = {
@@ -21,6 +22,7 @@ type UpdateCohortData = {
   applicationStartsAt?: Date;
   applicationEndsAt?: Date;
   isActive?: boolean;
+  isPubliclyListed?: boolean;
 };
 
 type ListCohortsParams = {
