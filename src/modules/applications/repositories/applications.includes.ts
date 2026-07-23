@@ -13,6 +13,11 @@ const orderedAnswersInclude = {
 const applicationWithCohortInclude = {
   cohort: true,
   track: true,
+  review: {
+    select: {
+      isReady: true,
+    },
+  },
   answers: orderedAnswersInclude,
 };
 

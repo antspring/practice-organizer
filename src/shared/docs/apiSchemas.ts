@@ -252,6 +252,12 @@ const practiceApplicationResponseSchema = z.object({
   cohort: cohortResponseSchema,
   track: cohortTrackResponseSchema.nullable(),
   user: userResponseSchema.optional(),
+  review: z
+    .object({
+      isReady: z.boolean(),
+    })
+    .nullable()
+    .optional(),
   answers: z.array(practiceApplicationAnswerResponseSchema),
 });
 
